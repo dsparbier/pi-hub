@@ -2,16 +2,11 @@ import { useState } from 'react'
 import Navbar from './components/Navbar.jsx'
 import Sidebar from './components/Sidebar.jsx'
 import Dashboard from './components/Dashboard.jsx'
+import services from './config/services.js'
 import styles from './App.module.css'
 
-const VIEWS = [
-  { id: 'dashboard', label: 'Dashboard', icon: '⬡' },
-  { id: 'pihole', label: 'Pi-hole', icon: '🛡' },
-  { id: 'homeassistant', label: 'Home Assistant', icon: '🏠' },
-  { id: 'jellyfin', label: 'Jellyfin', icon: '▶' },
-  { id: 'portainer', label: 'Portainer', icon: '🐳' },
-  { id: 'system', label: 'System', icon: '📊' },
-]
+const DASHBOARD_VIEW = { id: 'dashboard', label: 'Dashboard', icon: '⬡' }
+const ALL_VIEWS = [DASHBOARD_VIEW, ...services]
 
 export default function App() {
   const [activeView, setActiveView] = useState('dashboard')
@@ -22,13 +17,13 @@ export default function App() {
       <Navbar onMenuToggle={() => setSidebarOpen(o => !o)} />
       <div className={styles.body}>
         <Sidebar
-          views={VIEWS}
+          views={ALL_VIEWS}
           activeView={activeView}
           onSelect={setActiveView}
           open={sidebarOpen}
         />
         <main className={styles.main}>
-          <Dashboard activeView={activeView} views={VIEWS} />
+          <Dashboard activeView={activeView} views={ALL_VIEWS} services={services} />
         </main>
       </div>
     </div>
