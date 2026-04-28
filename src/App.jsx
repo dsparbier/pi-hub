@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Navbar from './components/Navbar.jsx'
 import Sidebar from './components/Sidebar.jsx'
 import Dashboard from './components/Dashboard.jsx'
+import ServiceConsole from './components/ServiceConsole.jsx'
 import ManageServices from './components/ManageServices.jsx'
 import EditLayout from './components/EditLayout.jsx'
 import initialServices from './config/services.js'
@@ -22,6 +23,7 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [manageOpen, setManageOpen] = useState(false)
   const [editLayoutOpen, setEditLayoutOpen] = useState(false)
+  const [consoleService, setConsoleService] = useState(null)
 
   const allViews = [DASHBOARD_VIEW, ...services]
 
@@ -39,6 +41,11 @@ export default function App() {
     if (activeView === id) setActiveView('dashboard')
   }
 
+  function handleSelectView(id) {
+    setConsoleService(null)
+    setActiveView(id)
+  }
+
   return (
     <div className={styles.layout}>
       <Navbar
@@ -50,13 +57,25 @@ export default function App() {
         <Sidebar
           views={allViews}
           activeView={activeView}
-          onSelect={setActiveView}
+          onSelect={handleSelectView}
           open={sidebarOpen}
           onManageServices={() => setManageOpen(true)}
           onEditLayout={() => setEditLayoutOpen(true)}
         />
-        <main className={styles.main}>
-          <Dashboard activeView={activeView} views={allViews} services={services} />
+        <main className={`${styles.main} ${consoleService ? styles.mainConsole : ''}`}>
+          {consoleService ? (
+            <ServiceConsole
+              service={consoleService}
+              onClose={() => setConsoleService(null)}
+            />
+          ) : (
+            <Dashboard
+              activeView={activeView}
+              views={allViews}
+              services={services}
+              onOpenConsole={setConsoleService}
+            />
+          )}
         </main>
       </div>
 

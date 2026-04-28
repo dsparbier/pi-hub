@@ -91,9 +91,10 @@ function ServiceRow({ service, onEdit, onDelete }) {
       <span className={styles.rowIcon}>{service.icon || '⬡'}</span>
       <div className={styles.rowInfo}>
         <span className={styles.rowLabel}>{service.label}</span>
-        {service.description && (
-          <span className={styles.rowDesc}>{service.description}</span>
-        )}
+        {service.url
+          ? <a className={styles.rowUrl} href={service.url} target="_blank" rel="noopener noreferrer">{service.url}</a>
+          : <span className={styles.rowNoUrl}>No console URL set</span>
+        }
       </div>
       <StatusBadge status={service.status} />
       <div className={styles.rowActions}>
@@ -151,7 +152,7 @@ function ServiceForm({ initialValues, onSave, onCancel, isNew }) {
       </div>
 
       <div className={styles.formGroup}>
-        <label className={styles.formLabel}>URL <span className={styles.optional}>(optional)</span></label>
+        <label className={styles.formLabel}>Console URL</label>
         <input
           className={styles.formInput}
           value={form.url}

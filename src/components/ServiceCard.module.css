@@ -92,6 +92,25 @@
   flex-direction: column;
 }
 
+.consoleBtn {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-2);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+
+.consoleBtn:hover {
+  background: color-mix(in srgb, var(--color-accent) 12%, var(--color-surface-2));
+  border-color: color-mix(in srgb, var(--color-accent) 50%, var(--color-border));
+  color: var(--color-pi);
+}
+
 .placeholder {
   flex: 1;
   display: flex;
@@ -99,7 +118,7 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  opacity: 0.3;
+  opacity: 0.4;
 }
 
 .placeholderIcon {
@@ -110,4 +129,22 @@
   font-size: 12px;
   color: var(--color-text-muted);
   text-align: center;
+}
+
+.placeholderConsoleBtn {
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  color: var(--color-pi);
+  cursor: pointer;
+  opacity: 1;
+  transition: background var(--transition);
+}
+
+.placeholderConsoleBtn:hover {
+  background: color-mix(in srgb, var(--color-accent) 20%, transparent);
 }

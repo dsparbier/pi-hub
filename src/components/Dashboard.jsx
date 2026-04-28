@@ -1,8 +1,9 @@
 import ServiceCard from './ServiceCard.jsx'
 import styles from './Dashboard.module.css'
 
-export default function Dashboard({ activeView, views, services }) {
+export default function Dashboard({ activeView, views, services, onOpenConsole }) {
   const view = views.find(v => v.id === activeView)
+  const activeService = services.find(s => s.id === activeView)
 
   return (
     <div className={styles.dashboard}>
@@ -13,19 +14,29 @@ export default function Dashboard({ activeView, views, services }) {
         </div>
         <div className={styles.pageActions}>
           <button className={styles.btn}>Refresh</button>
-          <button className={`${styles.btn} ${styles.btnPrimary}`}>＋ Add Panel</button>
+          {activeService?.url && (
+            <button
+              className={`${styles.btn} ${styles.btnConsole}`}
+              onClick={() => onOpenConsole(activeService)}
+            >
+              Open Console ↗
+            </button>
+          )}
+          {activeView === 'dashboard' && (
+            <button className={`${styles.btn} ${styles.btnPrimary}`}>＋ Add Panel</button>
+          )}
         </div>
       </div>
 
       {activeView === 'dashboard'
-        ? <DashboardOverview services={services} />
-        : <ServiceDetail service={services.find(s => s.id === activeView)} />
+        ? <DashboardOverview services={services} onOpenConsole={onOpenConsole} />
+        : <ServiceDetail service={activeService} onOpenConsole={onOpenConsole} />
       }
     </div>
   )
 }
 
-function DashboardOverview({ services }) {
+function DashboardOverview({ services, onOpenConsole }) {
   return (
     <div className={styles.grid}>
       {services.map(service => (
@@ -35,13 +46,15 @@ function DashboardOverview({ services }) {
           icon={service.icon}
           status={service.status}
           description={service.description}
+          url={service.url}
+          onOpenConsole={service.url ? () => onOpenConsole(service) : undefined}
         />
       ))}
     </div>
   )
 }
 
-function ServiceDetail({ service }) {
+function ServiceDetail({ service, onOpenConsole }) {
   if (!service) return <EmptyState />
 
   return (
@@ -50,8 +63,10 @@ function ServiceDetail({ service }) {
         title={`${service.label} — Overview`}
         icon={service.icon}
         status={service.status}
-        description={`${service.description} · summary stats`}
+        description={service.description}
         size="wide"
+        url={service.url}
+        onOpenConsole={service.url ? () => onOpenConsole(service) : undefined}
       />
       <ServiceCard
         title="Status"

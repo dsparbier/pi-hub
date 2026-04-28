@@ -161,6 +161,27 @@
   text-overflow: ellipsis;
 }
 
+.rowUrl {
+  font-size: 11px;
+  font-family: 'Courier New', monospace;
+  color: var(--color-accent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-decoration: none;
+}
+
+.rowUrl:hover {
+  text-decoration: underline;
+}
+
+.rowNoUrl {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  opacity: 0.5;
+  font-style: italic;
+}
+
 .rowActions {
   display: flex;
   gap: 4px;

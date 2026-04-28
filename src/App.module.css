@@ -17,3 +17,8 @@
   padding: 24px;
   background: var(--color-bg);
 }
+
+.mainConsole {
+  padding: 0;
+  overflow: hidden;
+}

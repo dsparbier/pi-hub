@@ -1,6 +1,6 @@
 import styles from './ServiceCard.module.css'
 
-export default function ServiceCard({ title, icon, status = 'online', description, children, size = 'medium' }) {
+export default function ServiceCard({ title, icon, status = 'online', description, children, size = 'medium', url, onOpenConsole }) {
   return (
     <div className={`${styles.card} ${styles[size]}`}>
       <div className={styles.header}>
@@ -10,6 +10,15 @@ export default function ServiceCard({ title, icon, status = 'online', descriptio
         </div>
         <div className={styles.headerRight}>
           <StatusBadge status={status} />
+          {url && onOpenConsole && (
+            <button
+              className={styles.consoleBtn}
+              onClick={onOpenConsole}
+              title={`Open ${title} console`}
+            >
+              Open ↗
+            </button>
+          )}
           <button className={styles.menuBtn} title="Options">⋯</button>
         </div>
       </div>
@@ -19,6 +28,11 @@ export default function ServiceCard({ title, icon, status = 'online', descriptio
           <div className={styles.placeholder}>
             <span className={styles.placeholderIcon}>⬡</span>
             <p className={styles.placeholderText}>{description ?? 'Service view — placeholder'}</p>
+            {url && onOpenConsole && (
+              <button className={styles.placeholderConsoleBtn} onClick={onOpenConsole}>
+                Open Console ↗
+              </button>
+            )}
           </div>
         )}
       </div>

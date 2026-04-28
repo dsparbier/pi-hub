@@ -8,7 +8,7 @@
  *   icon        – emoji shown in sidebar and panel header
  *   description – short blurb shown on the placeholder card
  *   status      – 'online' | 'offline' | 'warning' | 'loading'
- *   url         – optional: direct link to the service (future use)
+ *   url         – console URL rendered in the embedded viewer (e.g. http://192.168.1.x:port)
  */
 const services = [
   {
@@ -17,6 +17,7 @@ const services = [
     icon: '🛡',
     description: 'DNS-level ad & tracker blocking',
     status: 'online',
+    url: 'http://192.168.1.100:3000',
   },
   {
     id: 'uptime-kuma',
@@ -24,6 +25,7 @@ const services = [
     icon: '📈',
     description: 'Service uptime monitoring and alerting',
     status: 'online',
+    url: 'http://192.168.1.100:3001',
   },
   {
     id: 'portainer',
@@ -31,6 +33,7 @@ const services = [
     icon: '🐳',
     description: 'Docker container and stack management',
     status: 'online',
+    url: 'http://192.168.1.100:9000',
   },
   {
     id: 'beszel',
@@ -38,6 +41,7 @@ const services = [
     icon: '📊',
     description: 'Lightweight system resource monitoring',
     status: 'online',
+    url: 'http://192.168.1.100:8090',
   },
   {
     id: 'n8n',
@@ -45,6 +49,7 @@ const services = [
     icon: '⚡',
     description: 'Workflow automation and integrations',
     status: 'online',
+    url: 'http://192.168.1.100:5678',
   },
   {
     id: 'nginx',
@@ -52,6 +57,7 @@ const services = [
     icon: '🌐',
     description: 'Reverse proxy and web server',
     status: 'online',
+    url: 'http://192.168.1.100:81',
   },
   {
     id: 'sql-hub',
@@ -59,6 +65,7 @@ const services = [
     icon: '🗄',
     description: 'Database management and query interface',
     status: 'online',
+    url: 'http://192.168.1.100:8080',
   },
   {
     id: 'tool-hub',
@@ -66,6 +73,7 @@ const services = [
     icon: '🔧',
     description: 'Utility tools and scripts',
     status: 'online',
+    url: 'http://192.168.1.100:8888',
   },
 ]
 
