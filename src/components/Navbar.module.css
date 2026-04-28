@@ -112,6 +112,16 @@
   color: var(--color-text);
 }
 
+.themeBtn {
+  font-size: 14px;
+  border: 1px solid var(--color-border);
+  padding: 5px 9px;
+}
+
+.themeBtn:hover {
+  border-color: color-mix(in srgb, var(--color-accent) 50%, var(--color-border));
+}
+
 .avatar {
   width: 30px;
   height: 30px;

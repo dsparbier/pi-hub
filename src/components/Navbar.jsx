@@ -1,6 +1,10 @@
 import styles from './Navbar.module.css'
 
-export default function Navbar({ onMenuToggle }) {
+const THEME_CYCLE = { dark: 'light', light: 'system', system: 'dark' }
+const THEME_ICON  = { dark: '🌙', light: '☀️', system: '💻' }
+const THEME_TITLE = { dark: 'Dark mode — click for Light', light: 'Light mode — click for System', system: 'System mode — click for Dark' }
+
+export default function Navbar({ onMenuToggle, theme, onThemeToggle }) {
   return (
     <header className={styles.navbar}>
       <div className={styles.left}>
@@ -22,6 +26,14 @@ export default function Navbar({ onMenuToggle }) {
       </div>
 
       <div className={styles.right}>
+        <button
+          className={`${styles.iconBtn} ${styles.themeBtn}`}
+          onClick={() => onThemeToggle(THEME_CYCLE[theme] ?? 'dark')}
+          title={THEME_TITLE[theme]}
+          aria-label="Toggle theme"
+        >
+          {THEME_ICON[theme] ?? '🌙'}
+        </button>
         <button className={styles.iconBtn} title="Notifications">🔔</button>
         <button className={styles.iconBtn} title="Settings">⚙</button>
         <div className={styles.avatar}>D</div>

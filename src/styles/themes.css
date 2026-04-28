@@ -1,0 +1,23 @@
+/* Dark theme (default — also applied when data-theme="dark") */
+[data-theme="dark"] {
+  --color-bg:           #0f1117;
+  --color-surface:      #1a1d26;
+  --color-surface-2:    #22263a;
+  --color-border:       #2e3350;
+  --color-text:         #e2e8f0;
+  --color-text-muted:   #64748b;
+}
+
+/* Light theme */
+[data-theme="light"] {
+  --color-bg:           #f1f5f9;
+  --color-surface:      #ffffff;
+  --color-surface-2:    #f8fafc;
+  --color-border:       #e2e8f0;
+  --color-text:         #1e293b;
+  --color-text-muted:   #64748b;
+}
+
+/* Light theme adjustments for semantic colours */
+[data-theme="light"] ::-webkit-scrollbar-track { background: var(--color-bg); }
+[data-theme="light"] ::-webkit-scrollbar-thumb { background: var(--color-border); }

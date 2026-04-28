@@ -1,6 +1,6 @@
 import styles from './Sidebar.module.css'
 
-export default function Sidebar({ views, activeView, onSelect, open, onManageServices }) {
+export default function Sidebar({ views, activeView, onSelect, open, onManageServices, onEditLayout }) {
   return (
     <aside className={`${styles.sidebar} ${open ? styles.open : styles.collapsed}`}>
       <nav className={styles.nav}>
@@ -24,7 +24,7 @@ export default function Sidebar({ views, activeView, onSelect, open, onManageSer
             <span className={styles.navIcon}>⚙</span>
             {open && <span className={styles.navLabel}>Manage Services</span>}
           </button>
-          <button className={styles.navItem}>
+          <button className={styles.navItem} onClick={onEditLayout}>
             <span className={styles.navIcon}>✎</span>
             {open && <span className={styles.navLabel}>Edit Layout</span>}
           </button>

@@ -3,7 +3,9 @@ import Navbar from './components/Navbar.jsx'
 import Sidebar from './components/Sidebar.jsx'
 import Dashboard from './components/Dashboard.jsx'
 import ManageServices from './components/ManageServices.jsx'
+import EditLayout from './components/EditLayout.jsx'
 import initialServices from './config/services.js'
+import { useTheme } from './hooks/useTheme.js'
 import styles from './App.module.css'
 
 const DASHBOARD_VIEW = { id: 'dashboard', label: 'Dashboard', icon: '⬡' }
@@ -13,10 +15,13 @@ function slugify(label) {
 }
 
 export default function App() {
+  const { theme, setTheme, accentIndex, setAccent } = useTheme()
+
   const [services, setServices] = useState(initialServices)
   const [activeView, setActiveView] = useState('dashboard')
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [manageOpen, setManageOpen] = useState(false)
+  const [editLayoutOpen, setEditLayoutOpen] = useState(false)
 
   const allViews = [DASHBOARD_VIEW, ...services]
 
@@ -36,7 +41,11 @@ export default function App() {
 
   return (
     <div className={styles.layout}>
-      <Navbar onMenuToggle={() => setSidebarOpen(o => !o)} />
+      <Navbar
+        onMenuToggle={() => setSidebarOpen(o => !o)}
+        theme={theme}
+        onThemeToggle={setTheme}
+      />
       <div className={styles.body}>
         <Sidebar
           views={allViews}
@@ -44,6 +53,7 @@ export default function App() {
           onSelect={setActiveView}
           open={sidebarOpen}
           onManageServices={() => setManageOpen(true)}
+          onEditLayout={() => setEditLayoutOpen(true)}
         />
         <main className={styles.main}>
           <Dashboard activeView={activeView} views={allViews} services={services} />
@@ -57,6 +67,16 @@ export default function App() {
           onAdd={handleAddService}
           onEdit={handleEditService}
           onDelete={handleDeleteService}
+        />
+      )}
+
+      {editLayoutOpen && (
+        <EditLayout
+          theme={theme}
+          setTheme={setTheme}
+          accentIndex={accentIndex}
+          setAccent={setAccent}
+          onClose={() => setEditLayoutOpen(false)}
         />
       )}
     </div>
