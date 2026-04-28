@@ -1,6 +1,6 @@
 import styles from './Sidebar.module.css'
 
-export default function Sidebar({ views, activeView, onSelect, open }) {
+export default function Sidebar({ views, activeView, onSelect, open, onManageServices }) {
   return (
     <aside className={`${styles.sidebar} ${open ? styles.open : styles.collapsed}`}>
       <nav className={styles.nav}>
@@ -20,9 +20,9 @@ export default function Sidebar({ views, activeView, onSelect, open }) {
 
         <div className={styles.section}>
           <span className={styles.sectionLabel}>Manage</span>
-          <button className={styles.navItem}>
-            <span className={styles.navIcon}>＋</span>
-            {open && <span className={styles.navLabel}>Add Service</span>}
+          <button className={styles.navItem} onClick={onManageServices}>
+            <span className={styles.navIcon}>⚙</span>
+            {open && <span className={styles.navLabel}>Manage Services</span>}
           </button>
           <button className={styles.navItem}>
             <span className={styles.navIcon}>✎</span>
