@@ -1,0 +1,113 @@
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: border-color var(--transition);
+}
+
+.card:hover {
+  border-color: color-mix(in srgb, var(--color-accent) 40%, var(--color-border));
+}
+
+/* Grid size variants */
+.small  { min-height: 140px; }
+.medium { min-height: 200px; }
+.large  { min-height: 300px; }
+.wide   { min-height: 200px; grid-column: span 2; }
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--color-border);
+  gap: 8px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.online  { background: color-mix(in srgb, var(--color-success) 15%, transparent); color: var(--color-success); }
+.offline { background: color-mix(in srgb, var(--color-danger) 15%, transparent);  color: var(--color-danger); }
+.warning { background: color-mix(in srgb, var(--color-warning) 15%, transparent); color: var(--color-warning); }
+.loading { background: color-mix(in srgb, var(--color-text-muted) 15%, transparent); color: var(--color-text-muted); }
+
+.menuBtn {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 18px;
+  padding: 2px 6px;
+  border-radius: var(--radius);
+  line-height: 1;
+  transition: background var(--transition), color var(--transition);
+}
+
+.menuBtn:hover {
+  background: var(--color-surface-2);
+  color: var(--color-text);
+}
+
+.body {
+  flex: 1;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+.placeholder {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  opacity: 0.3;
+}
+
+.placeholderIcon {
+  font-size: 28px;
+}
+
+.placeholderText {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  text-align: center;
+}
