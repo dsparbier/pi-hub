@@ -8,7 +8,7 @@
  *   icon        – emoji shown in sidebar and panel header
  *   description – short blurb shown on the placeholder card
  *   status      – 'online' | 'offline' | 'warning' | 'loading'
- *   url         – console URL rendered in the embedded viewer (e.g. http://192.168.1.x:port)
+ *   url         – console URL rendered in the embedded viewer
  */
 const services = [
   {
@@ -25,7 +25,7 @@ const services = [
     icon: '📈',
     description: 'Service uptime monitoring and alerting',
     status: 'online',
-    url: 'http://192.168.1.100:3001',
+    url: 'http://uptime-kuma.pi-hub.local',
   },
   {
     id: 'portainer',
@@ -33,7 +33,7 @@ const services = [
     icon: '🐳',
     description: 'Docker container and stack management',
     status: 'online',
-    url: 'http://192.168.1.100:9000',
+    url: 'http://portainer.pi-hub.local',
   },
   {
     id: 'beszel',
@@ -41,7 +41,7 @@ const services = [
     icon: '📊',
     description: 'Lightweight system resource monitoring',
     status: 'online',
-    url: 'http://192.168.1.100:8090',
+    url: 'http://beszel.pi-hub.local',
   },
   {
     id: 'n8n',
@@ -49,7 +49,7 @@ const services = [
     icon: '⚡',
     description: 'Workflow automation and integrations',
     status: 'online',
-    url: 'http://192.168.1.100:5678',
+    url: 'http://n8n.pi-hub.local',
   },
   {
     id: 'nginx',
@@ -57,7 +57,7 @@ const services = [
     icon: '🌐',
     description: 'Reverse proxy and web server',
     status: 'online',
-    url: 'http://192.168.68.115',
+    url: 'http://nginx-proxy.pi-hub.local',
   },
   {
     id: 'sql-hub',
@@ -65,7 +65,7 @@ const services = [
     icon: '🗄',
     description: 'Database management and query interface',
     status: 'online',
-    url: 'http://192.168.1.100:8080',
+    url: 'http://192.168.68.115:1234',
   },
   {
     id: 'tool-hub',
@@ -73,7 +73,7 @@ const services = [
     icon: '🔧',
     description: 'Utility tools and scripts',
     status: 'online',
-    url: 'http://192.168.1.100:8888',
+    url: 'http://tool-hub.pi-hub.local',
   },
 ]
 
