@@ -17,7 +17,7 @@ const services = [
     icon: '🛡',
     description: 'DNS-level ad & tracker blocking',
     status: 'online',
-    url: 'http://192.168.1.100:3000',
+    url: 'http://adguard.pi-hub.local',
   },
   {
     id: 'uptime-kuma',
@@ -57,7 +57,7 @@ const services = [
     icon: '🌐',
     description: 'Reverse proxy and web server',
     status: 'online',
-    url: 'http://192.168.1.100:81',
+    url: 'http://192.168.68.115',
   },
   {
     id: 'sql-hub',
