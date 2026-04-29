@@ -73,6 +73,22 @@
   border-color: var(--color-accent);
 }
 
+.btnBrowser {
+  background: color-mix(in srgb, var(--color-success) 12%, var(--color-surface));
+  border-color: color-mix(in srgb, var(--color-success) 40%, var(--color-border));
+  color: var(--color-success);
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.btnBrowser:hover {
+  background: color-mix(in srgb, var(--color-success) 22%, var(--color-surface));
+  border-color: var(--color-success);
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));

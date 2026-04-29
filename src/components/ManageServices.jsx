@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import styles from './ManageServices.module.css'
 
-const EMPTY_FORM = { label: '', icon: '', description: '', url: '', status: 'online', group: '' }
+const EMPTY_FORM = { label: '', icon: '', description: '', url: '', dashboardUrl: '', homeUrl: '', adminUrl: '', status: 'online', group: '' }
 const STATUS_OPTIONS = ['online', 'offline', 'warning', 'loading']
 
 export default function ManageServices({ services, groups, onClose, onAdd, onEdit, onDelete }) {
@@ -101,6 +101,13 @@ function ServiceRow({ service, groups = [], onEdit, onDelete }) {
           ? <a className={styles.rowUrl} href={service.url} target="_blank" rel="noopener noreferrer">{service.url}</a>
           : <span className={styles.rowNoUrl}>No console URL set</span>
         }
+        {(service.dashboardUrl || service.homeUrl || service.adminUrl) && (
+          <span className={styles.rowUrlBadges}>
+            {service.dashboardUrl && <span className={styles.rowUrlChip}>Dashboard</span>}
+            {service.homeUrl      && <span className={styles.rowUrlChip}>Default</span>}
+            {service.adminUrl     && <span className={styles.rowUrlChip}>Admin</span>}
+          </span>
+        )}
       </div>
       <StatusBadge status={service.status} />
       <div className={styles.rowActions}>
@@ -164,6 +171,39 @@ function ServiceForm({ initialValues, groups = [], onSave, onCancel, isNew }) {
           value={form.url}
           onChange={e => set('url', e.target.value)}
           placeholder="http://192.168.1.x:port"
+          type="url"
+        />
+      </div>
+
+      <div className={styles.formGroup}>
+        <label className={styles.formLabel}>Dashboard Page</label>
+        <input
+          className={styles.formInput}
+          value={form.dashboardUrl}
+          onChange={e => set('dashboardUrl', e.target.value)}
+          placeholder="https://…/dashboard"
+          type="url"
+        />
+      </div>
+
+      <div className={styles.formGroup}>
+        <label className={styles.formLabel}>Default Page</label>
+        <input
+          className={styles.formInput}
+          value={form.homeUrl}
+          onChange={e => set('homeUrl', e.target.value)}
+          placeholder="https://…/"
+          type="url"
+        />
+      </div>
+
+      <div className={styles.formGroup}>
+        <label className={styles.formLabel}>Admin Page</label>
+        <input
+          className={styles.formInput}
+          value={form.adminUrl}
+          onChange={e => set('adminUrl', e.target.value)}
+          placeholder="https://…/admin"
           type="url"
         />
       </div>

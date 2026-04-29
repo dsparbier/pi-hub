@@ -92,6 +92,16 @@ export default function Dashboard({ activeView, views, services, onOpenConsole }
               Open Console ↗
             </button>
           )}
+          {activeService && (activeService.homeUrl || activeService.dashboardUrl || activeService.adminUrl || activeService.url) && (
+            <a
+              href={activeService.homeUrl || activeService.dashboardUrl || activeService.adminUrl || activeService.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`${styles.btn} ${styles.btnBrowser}`}
+            >
+              Open in Browser ↗
+            </a>
+          )}
           {activeView === 'dashboard' && (
             <button className={`${styles.btn} ${styles.btnPrimary}`}>＋ Add Panel</button>
           )}

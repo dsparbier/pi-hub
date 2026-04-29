@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { ACCENT_PRESETS } from '../hooks/useTheme.js'
 import styles from './EditLayout.module.css'
 
@@ -7,7 +8,27 @@ const THEMES = [
   { value: 'system', label: 'System', icon: '💻' },
 ]
 
-export default function EditLayout({ theme, setTheme, accentIndex, setAccent, onClose }) {
+const EMPTY_GROUP = { icon: '', label: '' }
+
+export default function EditLayout({
+  theme, setTheme,
+  accentIndex, setAccent,
+  groups, onAddGroup, onEditGroup, onDeleteGroup,
+  onClose,
+}) {
+  const [addingGroup, setAddingGroup] = useState(false)
+  const [editingGroupId, setEditingGroupId] = useState(null)
+
+  function handleAdd(data) {
+    onAddGroup(data)
+    setAddingGroup(false)
+  }
+
+  function handleEdit(id, data) {
+    onEditGroup(id, data)
+    setEditingGroupId(null)
+  }
+
   return (
     <>
       <div className={styles.backdrop} onClick={onClose} />
@@ -71,8 +92,100 @@ export default function EditLayout({ theme, setTheme, accentIndex, setAccent, on
             </div>
           </section>
 
+          <div className={styles.divider} />
+
+          {/* ── Groups ── */}
+          <section className={styles.section}>
+            <h3 className={styles.sectionTitle}>Sidebar Groups</h3>
+
+            {addingGroup ? (
+              <GroupForm
+                initialValues={EMPTY_GROUP}
+                onSave={handleAdd}
+                onCancel={() => setAddingGroup(false)}
+                isNew
+              />
+            ) : (
+              <button
+                className={styles.groupAddBtn}
+                onClick={() => { setAddingGroup(true); setEditingGroupId(null) }}
+              >
+                <span>＋</span> Add Group
+              </button>
+            )}
+
+            <ul className={styles.groupList}>
+              {groups.map(g => (
+                <li key={g.id}>
+                  {editingGroupId === g.id ? (
+                    <GroupForm
+                      initialValues={g}
+                      onSave={data => handleEdit(g.id, data)}
+                      onCancel={() => setEditingGroupId(null)}
+                    />
+                  ) : (
+                    <div className={styles.groupRow}>
+                      <span className={styles.groupRowIcon}>{g.icon || '⬡'}</span>
+                      <span className={styles.groupRowLabel}>{g.label}</span>
+                      <div className={styles.groupRowActions}>
+                        <button
+                          className={styles.groupActionBtn}
+                          onClick={() => { setEditingGroupId(g.id); setAddingGroup(false) }}
+                          title="Edit"
+                        >✎</button>
+                        <button
+                          className={`${styles.groupActionBtn} ${styles.groupDeleteBtn}`}
+                          onClick={() => onDeleteGroup(g.id)}
+                          title="Delete"
+                        >✕</button>
+                      </div>
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ul>
+
+            {groups.length === 0 && !addingGroup && (
+              <p className={styles.groupEmpty}>No groups defined yet.</p>
+            )}
+          </section>
+
         </div>
       </aside>
     </>
+  )
+}
+
+function GroupForm({ initialValues, onSave, onCancel, isNew }) {
+  const [form, setForm] = useState({ ...EMPTY_GROUP, ...initialValues })
+
+  function handleSubmit(e) {
+    e.preventDefault()
+    if (!form.label.trim()) return
+    onSave({ ...form, label: form.label.trim() })
+  }
+
+  return (
+    <form className={styles.groupForm} onSubmit={handleSubmit}>
+      <input
+        className={`${styles.groupInput} ${styles.groupIconInput}`}
+        value={form.icon}
+        onChange={e => setForm(f => ({ ...f, icon: e.target.value }))}
+        placeholder="🏗"
+        maxLength={4}
+      />
+      <input
+        className={styles.groupInput}
+        value={form.label}
+        onChange={e => setForm(f => ({ ...f, label: e.target.value }))}
+        placeholder="Group name"
+        required
+        style={{ flex: 1 }}
+      />
+      <button type="submit" className={styles.groupSaveBtn}>
+        {isNew ? '＋' : '✓'}
+      </button>
+      <button type="button" className={styles.groupCancelBtn} onClick={onCancel}>✕</button>
+    </form>
   )
 }

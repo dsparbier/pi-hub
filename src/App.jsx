@@ -21,7 +21,7 @@ export default function App() {
   const { theme, setTheme, accentIndex, setAccent } = useTheme()
 
   const [services, setServices] = useState(initialServices)
-  const [groups] = useState(initialGroups)
+  const [groups, setGroups] = useState(initialGroups)
   const [activeView, setActiveView] = useState('dashboard')
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [collapsedGroups, setCollapsedGroups] = useState(new Set())
@@ -52,6 +52,20 @@ export default function App() {
   function handleDeleteService(id) {
     setServices(prev => prev.filter(s => s.id !== id))
     if (activeView === id) setActiveView('dashboard')
+  }
+
+  function handleAddGroup(data) {
+    const id = slugify(data.label) || `group-${Date.now()}`
+    setGroups(prev => [...prev, { ...data, id }])
+  }
+
+  function handleEditGroup(id, data) {
+    setGroups(prev => prev.map(g => g.id === id ? { ...g, ...data } : g))
+  }
+
+  function handleDeleteGroup(id) {
+    setGroups(prev => prev.filter(g => g.id !== id))
+    setServices(prev => prev.map(s => s.group === id ? { ...s, group: '' } : s))
   }
 
   function handleSelectView(id) {
@@ -121,6 +135,10 @@ export default function App() {
           setTheme={setTheme}
           accentIndex={accentIndex}
           setAccent={setAccent}
+          groups={groups}
+          onAddGroup={handleAddGroup}
+          onEditGroup={handleEditGroup}
+          onDeleteGroup={handleDeleteGroup}
           onClose={() => setEditLayoutOpen(false)}
         />
       )}
