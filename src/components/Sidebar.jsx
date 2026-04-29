@@ -217,7 +217,7 @@ export default function Sidebar({
 
       {open && (
         <div className={styles.footer}>
-          <span className={styles.version}>Pi-Hub v0.0.0</span>
+          <span className={styles.version}>Pi-Hub v0.1.0</span>
         </div>
       )}
     </aside>

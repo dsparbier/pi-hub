@@ -187,7 +187,7 @@ MANAGE                           ← label shown only when open
   ✎  Edit Layout
   📋  Logs
 ─────────────────────────────────
-Pi-Hub v0.0.0                    ← footer, shown only when open
+Pi-Hub v0.1.0                    ← footer, shown only when open
 ```
 
 #### Group header behaviour:
@@ -553,4 +553,4 @@ src/
 
 ---
 
-*Generated: 2026-04-29 | Pi-Hub v0.0.0*
+*Generated: 2026-04-29 | Pi-Hub v0.1.0*
