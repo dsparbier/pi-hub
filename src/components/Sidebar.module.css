@@ -143,6 +143,37 @@
   text-overflow: ellipsis;
 }
 
+/* ── Drag and drop ────────────────────────────── */
+.dragWrapper {
+  position: relative;
+}
+
+.dragging > * {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.dropBefore::before,
+.dropAfter::after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  height: 2px;
+  background: var(--color-accent);
+  border-radius: 1px;
+  z-index: 10;
+}
+
+.dropBefore::before { top: 0; }
+.dropAfter::after   { bottom: 0; }
+
+.groupDragOver {
+  background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--color-accent) 50%, var(--color-border));
+  color: var(--color-text);
+}
+
 /* ── Footer ───────────────────────────────────── */
 .footer {
   padding: 10px 16px;

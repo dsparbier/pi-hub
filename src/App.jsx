@@ -68,6 +68,23 @@ export default function App() {
     setServices(prev => prev.map(s => s.group === id ? { ...s, group: '' } : s))
   }
 
+  function handleReorderService(draggedId, targetId, insertBefore) {
+    setServices(prev => {
+      const dragged = prev.find(s => s.id === draggedId)
+      const target  = prev.find(s => s.id === targetId)
+      if (!dragged || !target) return prev
+      const updated  = { ...dragged, group: target.group ?? '' }
+      const without  = prev.filter(s => s.id !== draggedId)
+      const idx      = without.findIndex(s => s.id === targetId)
+      const insertAt = insertBefore ? idx : idx + 1
+      return [...without.slice(0, insertAt), updated, ...without.slice(insertAt)]
+    })
+  }
+
+  function handleMoveServiceToGroup(serviceId, groupId) {
+    setServices(prev => prev.map(s => s.id === serviceId ? { ...s, group: groupId } : s))
+  }
+
   function handleSelectView(id) {
     setConsoleService(null)
     setActiveView(id)
@@ -93,6 +110,8 @@ export default function App() {
           onManageServices={() => setManageOpen(true)}
           onEditLayout={() => setEditLayoutOpen(true)}
           onOpenLogs={() => setLogViewerOpen(true)}
+          onReorderService={handleReorderService}
+          onMoveServiceToGroup={handleMoveServiceToGroup}
         />
         <main className={`${styles.main} ${consoleService ? styles.mainConsole : ''}`}>
           {consoleService ? (
