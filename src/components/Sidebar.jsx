@@ -1,7 +1,32 @@
-import { useState } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import styles from './Sidebar.module.css'
 
 const EMPTY_DRAG = { id: null, overId: null, pos: 'after', overGroupId: null }
+
+// ── DragWrapper at module scope — React never sees a new component type ──────
+function DragWrapper({ serviceId, drag, onDragStart, onDragOver, onDrop, onDragEnd, flashed, children }) {
+  const isDragging   = drag.id     === serviceId
+  const isOverBefore = drag.overId === serviceId && drag.pos === 'before'
+  const isOverAfter  = drag.overId === serviceId && drag.pos === 'after'
+  return (
+    <div
+      className={[
+        styles.dragWrapper,
+        isDragging   ? styles.dragging   : '',
+        isOverBefore ? styles.dropBefore : '',
+        isOverAfter  ? styles.dropAfter  : '',
+        flashed      ? styles.flash      : '',
+      ].filter(Boolean).join(' ')}
+      draggable
+      onDragStart={e => onDragStart(e, serviceId)}
+      onDragOver={e => onDragOver(e, serviceId)}
+      onDrop={e => onDrop(e, serviceId)}
+      onDragEnd={onDragEnd}
+    >
+      {children}
+    </div>
+  )
+}
 
 export default function Sidebar({
   views,
@@ -18,7 +43,16 @@ export default function Sidebar({
   onReorderService,
   onMoveServiceToGroup,
 }) {
-  const [drag, setDrag] = useState(EMPTY_DRAG)
+  const [drag, _setDrag] = useState(EMPTY_DRAG)
+  const dragRef = useRef(EMPTY_DRAG)
+  const [flashId, setFlashId] = useState(null)
+
+  // keep a ref in sync so stable callbacks always see current drag state
+  function setDrag(next) {
+    const value = typeof next === 'function' ? next(dragRef.current) : next
+    dragRef.current = value
+    _setDrag(value)
+  }
 
   const dashboard = views.find(v => v.id === 'dashboard')
 
@@ -29,70 +63,55 @@ export default function Sidebar({
 
   const ungrouped = services.filter(s => !s.group || !groups.find(g => g.id === s.group))
 
-  // ── drag handlers ──────────────────────────────────────────────────────────
-  function onDragStart(e, id) {
+  // ── stable drag handlers ───────────────────────────────────────────────────
+  const onDragStart = useCallback((e, id) => {
     e.dataTransfer.effectAllowed = 'move'
     e.dataTransfer.setData('text/plain', id)
-    // slight delay so the browser renders the ghost before we fade the source
     requestAnimationFrame(() => setDrag(d => ({ ...d, id })))
-  }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  function onDragOver(e, id) {
+  const onDragOver = useCallback((e, id) => {
     e.preventDefault()
     e.dataTransfer.dropEffect = 'move'
     const rect = e.currentTarget.getBoundingClientRect()
-    const pos = e.clientY < rect.top + rect.height / 2 ? 'before' : 'after'
-    setDrag(d => ({ ...d, overId: id, pos, overGroupId: null }))
-  }
+    const pos  = e.clientY < rect.top + rect.height / 2 ? 'before' : 'after'
+    // skip setState when nothing changed to avoid thrashing
+    const d = dragRef.current
+    if (d.overId !== id || d.pos !== pos) {
+      setDrag({ ...d, overId: id, pos, overGroupId: null })
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const onDrop = useCallback((e, targetId) => {
+    e.preventDefault()
+    const srcId = e.dataTransfer.getData('text/plain')
+    if (srcId && srcId !== targetId) {
+      onReorderService(srcId, targetId, dragRef.current.pos === 'before')
+      setFlashId(srcId)
+      setTimeout(() => setFlashId(null), 600)
+    }
+    setDrag(EMPTY_DRAG)
+  }, [onReorderService]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const onDragEnd = useCallback(() => setDrag(EMPTY_DRAG), []) // eslint-disable-line react-hooks/exhaustive-deps
 
   function onDragOverGroup(e, groupId) {
     e.preventDefault()
     e.dataTransfer.dropEffect = 'move'
-    setDrag(d => ({ ...d, overId: null, overGroupId: groupId }))
-  }
-
-  function onDrop(e, targetId) {
-    e.preventDefault()
-    const srcId = drag.id || e.dataTransfer.getData('text/plain')
-    if (srcId && srcId !== targetId) {
-      onReorderService(srcId, targetId, drag.pos === 'before')
+    if (dragRef.current.overGroupId !== groupId) {
+      setDrag({ ...dragRef.current, overId: null, overGroupId: groupId })
     }
-    setDrag(EMPTY_DRAG)
   }
 
   function onDropGroup(e, groupId) {
     e.preventDefault()
-    const srcId = drag.id || e.dataTransfer.getData('text/plain')
-    if (srcId) onMoveServiceToGroup(srcId, groupId)
+    const srcId = e.dataTransfer.getData('text/plain')
+    if (srcId) {
+      onMoveServiceToGroup(srcId, groupId)
+      setFlashId(srcId)
+      setTimeout(() => setFlashId(null), 600)
+    }
     setDrag(EMPTY_DRAG)
-  }
-
-  function onDragEnd() {
-    setDrag(EMPTY_DRAG)
-  }
-
-  // ── drag wrapper helper ────────────────────────────────────────────────────
-  function DragWrapper({ service, indent, children }) {
-    const isDragging = drag.id === service.id
-    const isOverBefore = drag.overId === service.id && drag.pos === 'before'
-    const isOverAfter  = drag.overId === service.id && drag.pos === 'after'
-    return (
-      <div
-        className={[
-          styles.dragWrapper,
-          isDragging   ? styles.dragging   : '',
-          isOverBefore ? styles.dropBefore : '',
-          isOverAfter  ? styles.dropAfter  : '',
-        ].join(' ')}
-        draggable
-        onDragStart={e => onDragStart(e, service.id)}
-        onDragOver={e => onDragOver(e, service.id)}
-        onDrop={e => onDrop(e, service.id)}
-        onDragEnd={onDragEnd}
-      >
-        {children}
-      </div>
-    )
   }
 
   return (
@@ -128,7 +147,16 @@ export default function Sidebar({
               </button>
 
               {(!isCollapsed || !open) && group.items.map(service => (
-                <DragWrapper key={service.id} service={service} indent={open}>
+                <DragWrapper
+                  key={service.id}
+                  serviceId={service.id}
+                  drag={drag}
+                  onDragStart={onDragStart}
+                  onDragOver={onDragOver}
+                  onDrop={onDrop}
+                  onDragEnd={onDragEnd}
+                  flashed={flashId === service.id}
+                >
                   <NavItem
                     view={service}
                     active={activeView === service.id}
@@ -147,7 +175,16 @@ export default function Sidebar({
           <div className={styles.section}>
             {open && <span className={styles.sectionLabel}>Other</span>}
             {ungrouped.map(service => (
-              <DragWrapper key={service.id} service={service}>
+              <DragWrapper
+                key={service.id}
+                serviceId={service.id}
+                drag={drag}
+                onDragStart={onDragStart}
+                onDragOver={onDragOver}
+                onDrop={onDrop}
+                onDragEnd={onDragEnd}
+                flashed={flashId === service.id}
+              >
                 <NavItem
                   view={service}
                   active={activeView === service.id}
