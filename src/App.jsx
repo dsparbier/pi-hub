@@ -5,7 +5,9 @@ import Dashboard from './components/Dashboard.jsx'
 import ServiceConsole from './components/ServiceConsole.jsx'
 import ManageServices from './components/ManageServices.jsx'
 import EditLayout from './components/EditLayout.jsx'
+import LogViewer from './components/LogViewer.jsx'
 import initialServices from './config/services.js'
+import initialGroups from './config/groups.js'
 import { useTheme } from './hooks/useTheme.js'
 import styles from './App.module.css'
 
@@ -19,11 +21,22 @@ export default function App() {
   const { theme, setTheme, accentIndex, setAccent } = useTheme()
 
   const [services, setServices] = useState(initialServices)
+  const [groups] = useState(initialGroups)
   const [activeView, setActiveView] = useState('dashboard')
   const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [collapsedGroups, setCollapsedGroups] = useState(new Set())
   const [manageOpen, setManageOpen] = useState(false)
   const [editLayoutOpen, setEditLayoutOpen] = useState(false)
+  const [logViewerOpen, setLogViewerOpen] = useState(false)
   const [consoleService, setConsoleService] = useState(null)
+
+  function handleToggleGroup(groupId) {
+    setCollapsedGroups(prev => {
+      const next = new Set(prev)
+      next.has(groupId) ? next.delete(groupId) : next.add(groupId)
+      return next
+    })
+  }
 
   const allViews = [DASHBOARD_VIEW, ...services]
 
@@ -56,11 +69,16 @@ export default function App() {
       <div className={styles.body}>
         <Sidebar
           views={allViews}
+          services={services}
+          groups={groups}
           activeView={activeView}
           onSelect={handleSelectView}
           open={sidebarOpen}
+          collapsedGroups={collapsedGroups}
+          onToggleGroup={handleToggleGroup}
           onManageServices={() => setManageOpen(true)}
           onEditLayout={() => setEditLayoutOpen(true)}
+          onOpenLogs={() => setLogViewerOpen(true)}
         />
         <main className={`${styles.main} ${consoleService ? styles.mainConsole : ''}`}>
           {consoleService ? (
@@ -82,10 +100,18 @@ export default function App() {
       {manageOpen && (
         <ManageServices
           services={services}
+          groups={groups}
           onClose={() => setManageOpen(false)}
           onAdd={handleAddService}
           onEdit={handleEditService}
           onDelete={handleDeleteService}
+        />
+      )}
+
+      {logViewerOpen && (
+        <LogViewer
+          services={services}
+          onClose={() => setLogViewerOpen(false)}
         />
       )}
 

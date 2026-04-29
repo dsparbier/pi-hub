@@ -1,0 +1,114 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.headerTitle {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--color-text-muted);
+}
+
+.recheck {
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  color: var(--color-text-muted);
+  font-size: 15px;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), transform 0.4s;
+}
+
+.recheck:hover { background: var(--color-surface-2); color: var(--color-text); }
+.recheck:disabled { opacity: 0.5; cursor: not-allowed; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinning { animation: spin 0.8s linear infinite; }
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+/* ── Check card ─────────────────────────────────────── */
+.card {
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: border-color var(--transition);
+}
+
+.card.online  { border-color: color-mix(in srgb, var(--color-success) 35%, var(--color-border)); }
+.card.offline { border-color: color-mix(in srgb, var(--color-danger)  35%, var(--color-border)); }
+.card.timeout { border-color: color-mix(in srgb, var(--color-warning) 35%, var(--color-border)); }
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cardIcon { font-size: 13px; flex-shrink: 0; }
+
+.cardLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Status dot */
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dot_idle         { background: var(--color-border); }
+.dot_pending      { background: var(--color-text-muted); animation: pulse 1s ease-in-out infinite; }
+.dot_online       { background: var(--color-success); box-shadow: 0 0 5px var(--color-success); }
+.dot_offline      { background: var(--color-danger); }
+.dot_timeout      { background: var(--color-warning); }
+.dot_unconfigured { background: var(--color-border); opacity: 0.4; }
+
+@keyframes pulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+
+.cardSub {
+  font-size: 10px;
+  color: var(--color-text-muted);
+  font-family: 'Courier New', monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cardResult { font-size: 11px; font-weight: 500; margin-top: 2px; }
+
+.resultOnline  { color: var(--color-success); }
+.resultOffline { color: var(--color-danger); }
+.resultTimeout { color: var(--color-warning); }
+.resultPending { color: var(--color-text-muted); }
+.resultMuted   { color: var(--color-text-muted); opacity: 0.5; font-style: italic; }

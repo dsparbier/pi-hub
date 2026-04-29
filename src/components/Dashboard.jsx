@@ -1,5 +1,6 @@
 import ServiceCard from './ServiceCard.jsx'
 import WidgetPlaceholder from './WidgetPlaceholder.jsx'
+import HealthPanel from './HealthPanel.jsx'
 import styles from './Dashboard.module.css'
 
 // ── Widget layouts per service category ──────────────────────────────────────
@@ -181,6 +182,9 @@ function ServiceDetail({ service, onOpenConsole }) {
         url={service.url}
         onOpenConsole={service.url ? () => onOpenConsole(service) : undefined}
       />
+
+      {/* Health check panel */}
+      <HealthPanel service={service} />
 
       {/* Category-driven monitoring widget placeholders */}
       {widgets.map(w => (

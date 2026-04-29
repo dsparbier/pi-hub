@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import styles from './ManageServices.module.css'
 
-const EMPTY_FORM = { label: '', icon: '', description: '', url: '', status: 'online' }
+const EMPTY_FORM = { label: '', icon: '', description: '', url: '', status: 'online', group: '' }
 const STATUS_OPTIONS = ['online', 'offline', 'warning', 'loading']
 
-export default function ManageServices({ services, onClose, onAdd, onEdit, onDelete }) {
+export default function ManageServices({ services, groups, onClose, onAdd, onEdit, onDelete }) {
   const [addingNew, setAddingNew] = useState(false)
   const [editingId, setEditingId] = useState(null)
 
@@ -40,6 +40,7 @@ export default function ManageServices({ services, onClose, onAdd, onEdit, onDel
           {addingNew ? (
             <ServiceForm
               initialValues={EMPTY_FORM}
+              groups={groups}
               onSave={handleAdd}
               onCancel={handleCancelAdd}
               isNew
@@ -62,6 +63,7 @@ export default function ManageServices({ services, onClose, onAdd, onEdit, onDel
                 {editingId === service.id ? (
                   <ServiceForm
                     initialValues={service}
+                    groups={groups}
                     onSave={data => handleEdit(service.id, data)}
                     onCancel={handleCancelEdit}
                   />
@@ -85,12 +87,16 @@ export default function ManageServices({ services, onClose, onAdd, onEdit, onDel
   )
 }
 
-function ServiceRow({ service, onEdit, onDelete }) {
+function ServiceRow({ service, groups = [], onEdit, onDelete }) {
+  const group = groups.find(g => g.id === service.group)
   return (
     <div className={styles.row}>
       <span className={styles.rowIcon}>{service.icon || '⬡'}</span>
       <div className={styles.rowInfo}>
-        <span className={styles.rowLabel}>{service.label}</span>
+        <div className={styles.rowTopLine}>
+          <span className={styles.rowLabel}>{service.label}</span>
+          {group && <span className={styles.rowGroup}>{group.icon} {group.label}</span>}
+        </div>
         {service.url
           ? <a className={styles.rowUrl} href={service.url} target="_blank" rel="noopener noreferrer">{service.url}</a>
           : <span className={styles.rowNoUrl}>No console URL set</span>
@@ -105,7 +111,7 @@ function ServiceRow({ service, onEdit, onDelete }) {
   )
 }
 
-function ServiceForm({ initialValues, onSave, onCancel, isNew }) {
+function ServiceForm({ initialValues, groups = [], onSave, onCancel, isNew }) {
   const [form, setForm] = useState({ ...EMPTY_FORM, ...initialValues })
 
   function set(field, value) {
@@ -160,6 +166,20 @@ function ServiceForm({ initialValues, onSave, onCancel, isNew }) {
           placeholder="http://192.168.1.x:port"
           type="url"
         />
+      </div>
+
+      <div className={styles.formGroup}>
+        <label className={styles.formLabel}>Group</label>
+        <select
+          className={styles.formSelect}
+          value={form.group ?? ''}
+          onChange={e => set('group', e.target.value)}
+        >
+          <option value="">— Ungrouped —</option>
+          {groups.map(g => (
+            <option key={g.id} value={g.id}>{g.icon} {g.label}</option>
+          ))}
+        </select>
       </div>
 
       <div className={styles.formGroup}>
