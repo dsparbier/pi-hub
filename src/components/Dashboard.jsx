@@ -193,8 +193,10 @@ function ServiceDetail({ service, onOpenConsole }) {
         onOpenConsole={service.url ? () => onOpenConsole(service) : undefined}
       />
 
-      {/* Health check panel */}
-      <HealthPanel service={service} />
+      {/* Health check panel — spans full grid width */}
+      <div className={styles.fullWidth}>
+        <HealthPanel service={service} />
+      </div>
 
       {/* Category-driven monitoring widget placeholders */}
       {widgets.map(w => (
