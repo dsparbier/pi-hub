@@ -80,6 +80,40 @@
   align-items: start;
 }
 
+.categoryBadge {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+}
+
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.categorySection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.categoryHeading {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: capitalize;
+  letter-spacing: 0.8px;
+  color: var(--color-text-muted);
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--color-border);
+}
+
 .emptyState {
   display: flex;
   flex-direction: column;

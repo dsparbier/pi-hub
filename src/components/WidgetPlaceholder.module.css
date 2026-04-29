@@ -1,0 +1,239 @@
+/* Shared */
+.phaseBadge {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  color: var(--color-text-muted);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 20%, var(--color-border));
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+@keyframes shimmer {
+  0%   { opacity: 0.25; }
+  50%  { opacity: 0.5; }
+  100% { opacity: 0.25; }
+}
+
+.shimmer {
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+/* ── Stat ─────────────────────────────────────────────────── */
+.stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  position: relative;
+  padding-bottom: 20px;
+}
+
+.statValue {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.statNumber {
+  font-size: 38px;
+  font-weight: 700;
+  color: var(--color-border);
+  line-height: 1;
+  letter-spacing: -1px;
+}
+
+.statUnit {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  opacity: 0.4;
+}
+
+.statSub {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  opacity: 0.4;
+}
+
+/* ── Bar ──────────────────────────────────────────────────── */
+.bars {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  padding-bottom: 20px;
+}
+
+.barRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.barLabel {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  opacity: 0.6;
+  width: 60px;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.barTrack {
+  flex: 1;
+  height: 6px;
+  background: var(--color-surface-2);
+  border-radius: 3px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+
+.barFill {
+  height: 100%;
+  background: var(--color-border);
+  border-radius: 3px;
+  min-width: 3px;
+  transition: width 0.4s ease;
+}
+
+.barPct {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  opacity: 0.4;
+  width: 28px;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+/* ── Chart ────────────────────────────────────────────────── */
+.chart {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+  padding-bottom: 20px;
+}
+
+.chartSvg {
+  flex: 1;
+  width: 100%;
+  height: 80px;
+}
+
+.gridLine {
+  stroke: var(--color-border);
+  stroke-width: 1;
+  opacity: 0.4;
+}
+
+.chartLine {
+  fill: none;
+  stroke: var(--color-border);
+  stroke-width: 2;
+  stroke-dasharray: 4 4;
+  opacity: 0.5;
+}
+
+.line0 { stroke: var(--color-border); }
+.line1 { stroke: var(--color-accent);  opacity: 0.2; }
+
+.chartAxes {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--color-text-muted);
+  opacity: 0.35;
+  padding: 0 2px;
+}
+
+/* ── Grid ─────────────────────────────────────────────────── */
+.grid {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  justify-content: center;
+  position: relative;
+  padding-bottom: 20px;
+}
+
+.gridRow {
+  display: flex;
+  gap: 3px;
+  flex-wrap: wrap;
+}
+
+.dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.dotEmpty   { background: var(--color-border); opacity: 0.4; }
+.dotOnline  { background: var(--color-success); opacity: 0.8; }
+.dotOffline { background: var(--color-danger);  opacity: 0.8; }
+
+.gridLegend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  color: var(--color-text-muted);
+  opacity: 0.5;
+  margin-top: 4px;
+}
+
+/* ── List ─────────────────────────────────────────────────── */
+.list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: center;
+  position: relative;
+  padding-bottom: 20px;
+}
+
+.listRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 16px;
+}
+
+.listDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-border);
+  flex-shrink: 0;
+}
+
+.listBar {
+  height: 8px;
+  background: var(--color-border);
+  border-radius: 4px;
+  flex: 1;
+}
+
+.listTag {
+  width: 36px;
+  height: 14px;
+  background: var(--color-border);
+  border-radius: 999px;
+  flex-shrink: 0;
+}

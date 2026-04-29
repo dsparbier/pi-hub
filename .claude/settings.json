@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -m pip install --user paramiko -q)",
+      "Bash(python3 -c \"import paramiko; print\\('ok'\\)\")",
+      "Bash(ssh -o StrictHostKeyChecking=no dieter@192.168.68.115 \"whoami && nginx -v 2>&1\")",
+      "Bash(ssh -o StrictHostKeyChecking=no dieter@192.168.68.115 \"docker ps --format 'table {{.Names}}\\\\t{{.Image}}\\\\t{{.Ports}}' 2>/dev/null; echo '---'; docker images --format 'table {{.Repository}}\\\\t{{.Tag}}' 2>/dev/null | head -20\")",
+      "Bash(ssh -o StrictHostKeyChecking=no dieter@192.168.68.115 \"docker exec nginx-proxy-manager find /data/nginx/proxy_host -name '*.conf' 2>/dev/null | xargs grep -l adguard 2>/dev/null\")",
+      "Bash(ssh -o StrictHostKeyChecking=no dieter@192.168.68.115 \"docker exec nginx-proxy-manager ls /data/nginx/ 2>&1 && docker exec nginx-proxy-manager ls /data/nginx/proxy_host/ 2>&1 | head -20\")",
+      "Bash(ssh -o StrictHostKeyChecking=no dieter@192.168.68.115 'for f in $\\(docker exec nginx-proxy-manager ls /data/nginx/proxy_host/\\); do echo \"=== $f ===\"; docker exec nginx-proxy-manager grep -i '\\\\''server_name\\\\|proxy_pass'\\\\'' /data/nginx/proxy_host/$f 2>/dev/null; done')",
+      "Bash(ssh -o StrictHostKeyChecking=no dieter@192.168.68.115 \"docker exec nginx-proxy-manager cat /data/nginx/proxy_host/1.conf\")",
+      "Bash(ssh -o StrictHostKeyChecking=no dieter@192.168.68.115 \"docker exec nginx-proxy-manager cat /etc/nginx/conf.d/include/proxy.conf\")",
+      "Bash(ssh -o StrictHostKeyChecking=no dieter@192.168.68.115 \"docker exec nginx-proxy-manager nginx -v 2>&1\")",
+      "Bash(ssh -o StrictHostKeyChecking=no dieter@192.168.68.115 \"docker exec nginx-proxy-manager find /data -name '*.db' 2>/dev/null\")",
+      "Bash(ssh -o StrictHostKeyChecking=no dieter@192.168.68.115 \"docker exec nginx-proxy-manager find /data -name 'database*' -o -name '*.sqlite' 2>/dev/null; ls /data 2>/dev/null || docker exec nginx-proxy-manager ls /data/\")",
+      "Bash(ssh -o StrictHostKeyChecking=no dieter@192.168.68.115 \"docker exec nginx-proxy-manager sqlite3 /data/database.sqlite \\\\\"SELECT id, domain_names, forward_host, forward_port, advanced_config FROM proxy_hosts WHERE domain_names LIKE '%adguard%';\\\\\"\")",
+      "Bash(ssh -o StrictHostKeyChecking=no dieter@192.168.68.115 \"which sqlite3 && sqlite3 --version\")",
+      "Bash(ssh -o StrictHostKeyChecking=no dieter@192.168.68.115 \"docker inspect nginx-proxy-manager --format '{{range .Mounts}}{{.Source}} -> {{.Destination}}{{println}}{{end}}'\")",
+      "Bash(ssh -o *)",
+      "Bash(git commit -m ' *)",
+      "Bash('~/.local/bin/gh' issue create --title 'Feature: Secure SSH credential storage and session management' --body ' *)"
+    ]
+  }
+}
