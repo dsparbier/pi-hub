@@ -38,11 +38,13 @@ function initResults(service) {
   }
 }
 
-export function useHealthCheck(service, logger) {
+export function useHealthCheck(service, logger, onResult) {
   const [results, setResults] = useState(() => initResults(service))
   const [checking, setChecking] = useState(false)
   const serviceRef = useRef(service)
+  const onResultRef = useRef(onResult)
   serviceRef.current = service
+  onResultRef.current = onResult
 
   const run = useCallback(async () => {
     const svc = serviceRef.current
@@ -51,14 +53,20 @@ export function useHealthCheck(service, logger) {
 
     logger?.debug(svc.id, `Health check started — ${svc.url}`)
 
-    const update = (key, patch) =>
-      setResults(prev => ({ ...prev, [key]: { ...prev[key], ...patch, checkedAt: new Date().toISOString() } }))
+    const update = (key, patch) => {
+      const result = { ...patch, checkedAt: new Date().toISOString() }
+      setResults(prev => ({ ...prev, [key]: { ...prev[key], ...result } }))
+      onResultRef.current?.(key, result)
+    }
 
-    const updateCustom = (id, patch) =>
+    const updateCustom = (id, patch) => {
+      const result = { ...patch, checkedAt: new Date().toISOString() }
       setResults(prev => ({
         ...prev,
-        custom: prev.custom.map(c => c.id === id ? { ...c, ...patch, checkedAt: new Date().toISOString() } : c),
+        custom: prev.custom.map(c => c.id === id ? { ...c, ...result } : c),
       }))
+      onResultRef.current?.(id, result)
+    }
 
     // Mark all pending
     setResults(prev => ({

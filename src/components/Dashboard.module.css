@@ -91,8 +91,8 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 8px;
   align-items: start;
 }
 
@@ -120,6 +120,13 @@
   gap: 12px;
 }
 
+.categoryHeadingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .categoryHeading {
   font-size: 11px;
   font-weight: 700;
@@ -128,6 +135,7 @@
   color: var(--color-text-muted);
   padding-bottom: 6px;
   border-bottom: 1px solid var(--color-border);
+  flex: 1;
 }
 
 .fullWidth {
@@ -148,4 +156,17 @@
 .emptyIcon {
   font-size: 48px;
   opacity: 0.2;
+}
+
+.categoryCount {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.widgetBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
 }

@@ -1,5 +1,10 @@
+import { useState, useEffect, useRef } from 'react'
 import HealthPanel from './HealthPanel.jsx'
 import ServiceCard from './ServiceCard.jsx'
+import WidgetPanel from './WidgetPanel.jsx'
+import WidgetEditor from './WidgetEditor.jsx'
+import { useHealthCheck } from '../hooks/useHealthCheck.js'
+import { useWidgetConfig } from '../hooks/useWidgetConfig.js'
 import styles from './Dashboard.module.css'
 
 // ── Dashboard root ────────────────────────────────────────────────────────────
@@ -61,18 +66,18 @@ function DashboardOverview({ services, onOpenConsole }) {
     <div className={styles.sections}>
       {categories.map(cat => {
         const group = services.filter(s => s.category === cat)
+        const online = group.filter(s => s.status === 'online').length
         return (
           <section key={cat} className={styles.categorySection}>
-            <h2 className={styles.categoryHeading}>{cat.replace('-', ' ')}</h2>
+            <div className={styles.categoryHeadingRow}>
+              <h2 className={styles.categoryHeading}>{cat.replace('-', ' ')}</h2>
+              <span className={styles.categoryCount}>{online} / {group.length} online</span>
+            </div>
             <div className={styles.grid}>
               {group.map(service => (
-                <ServiceCard
+                <ServiceCardWithHealth
                   key={service.id}
-                  title={service.label}
-                  icon={service.icon}
-                  status={service.status}
-                  description={service.description}
-                  url={service.url}
+                  service={service}
                   onOpenConsole={service.url ? () => onOpenConsole(service) : undefined}
                 />
               ))}
@@ -82,16 +87,15 @@ function DashboardOverview({ services, onOpenConsole }) {
       })}
       {uncategorised.length > 0 && (
         <section className={styles.categorySection}>
-          <h2 className={styles.categoryHeading}>Other</h2>
+          <div className={styles.categoryHeadingRow}>
+            <h2 className={styles.categoryHeading}>Other</h2>
+            <span className={styles.categoryCount}>{uncategorised.filter(s => s.status === 'online').length} / {uncategorised.length} online</span>
+          </div>
           <div className={styles.grid}>
             {uncategorised.map(service => (
-              <ServiceCard
+              <ServiceCardWithHealth
                 key={service.id}
-                title={service.label}
-                icon={service.icon}
-                status={service.status}
-                description={service.description}
-                url={service.url}
+                service={service}
                 onOpenConsole={service.url ? () => onOpenConsole(service) : undefined}
               />
             ))}
@@ -102,8 +106,69 @@ function DashboardOverview({ services, onOpenConsole }) {
   )
 }
 
+// ── ServiceCardWithHealth (wrapper) ───────────────────────────────────────────
+function ServiceCardWithHealth({ service, onOpenConsole }) {
+  const { results, checking, run } = useHealthCheck(service, null, onHealthResult)
+  const [sparkData, setSparkData] = useState([])
+  const historyRef = useRef([])
+
+  function onHealthResult(checkId, result) {
+    if (checkId === 'ping' && result.latency !== null) {
+      historyRef.current.push(result.latency)
+      if (historyRef.current.length > 30) {
+        historyRef.current.shift()
+      }
+      setSparkData([...historyRef.current])
+    }
+  }
+
+  useEffect(() => {
+    run()
+    const interval = setInterval(run, 30000)
+    return () => clearInterval(interval)
+  }, [run])
+
+  const liveStatus = results.ping.status === 'online' ? 'online' : results.ping.status === 'timeout' ? 'offline' : 'unknown'
+
+  return (
+    <ServiceCard
+      title={service.label}
+      icon={service.icon}
+      liveStatus={liveStatus}
+      latency={results.ping.latency}
+      sparkData={sparkData}
+      checking={checking}
+      url={service.url}
+      onOpenConsole={onOpenConsole}
+    />
+  )
+}
+
 // ── Service detail ────────────────────────────────────────────────────────────
 function ServiceDetail({ service }) {
+  const { getWidgets, setWidgets } = useWidgetConfig()
+  const { results, checking, run } = useHealthCheck(service, null, onHealthResult)
+  const [latencyHistory, setLatencyHistory] = useState([])
+  const [widgetEditorOpen, setWidgetEditorOpen] = useState(false)
+  const historyRef = useRef([])
+
+  function onHealthResult(checkId, result) {
+    if (checkId === 'ping' && result.latency !== null) {
+      historyRef.current.push(result.latency)
+      if (historyRef.current.length > 30) {
+        historyRef.current.shift()
+      }
+      setLatencyHistory([...historyRef.current])
+    }
+  }
+
+  useEffect(() => {
+    if (!service) return
+    run()
+    const interval = setInterval(run, 30000)
+    return () => clearInterval(interval)
+  }, [run, service])
+
   if (!service) {
     return (
       <div className={styles.emptyState}>
@@ -113,5 +178,23 @@ function ServiceDetail({ service }) {
     )
   }
 
-  return <HealthPanel service={service} />
+  const widgets = getWidgets(service.id)
+
+  return (
+    <>
+      <div className={styles.widgetBar}>
+        <button className={styles.btn} onClick={() => setWidgetEditorOpen(true)}>✎ Edit Widgets</button>
+      </div>
+      <WidgetPanel widgets={widgets} results={results} latencyHistory={latencyHistory} />
+      {widgetEditorOpen && (
+        <WidgetEditor
+          widgets={widgets}
+          onUpdate={w => {
+            setWidgets(service.id, w)
+          }}
+          onClose={() => setWidgetEditorOpen(false)}
+        />
+      )}
+    </>
+  )
 }

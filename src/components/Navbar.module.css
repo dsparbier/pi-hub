@@ -30,6 +30,7 @@
   gap: 8px;
 }
 
+/* ── Menu button ─────────────────────────── */
 .menuBtn {
   background: none;
   border: none;
@@ -39,25 +40,23 @@
   border-radius: var(--radius);
   transition: background var(--transition), color var(--transition);
 }
-
 .menuBtn:hover {
   background: var(--color-surface-2);
   color: var(--color-text);
 }
 
+/* ── Logo ────────────────────────────────── */
 .logo {
   display: flex;
   align-items: center;
   gap: 8px;
 }
-
 .logoIcon {
   font-size: 22px;
   color: var(--color-pi);
   font-weight: 700;
   line-height: 1;
 }
-
 .logoText {
   font-size: 16px;
   font-weight: 700;
@@ -65,38 +64,117 @@
   letter-spacing: 0.5px;
 }
 
+/* ── Status bar pill ─────────────────────── */
 .statusBar {
   display: flex;
   align-items: center;
-  gap: 20px;
-  padding: 6px 14px;
+  gap: 14px;
+  padding: 5px 14px;
   background: var(--color-surface-2);
   border: 1px solid var(--color-border);
   border-radius: 999px;
 }
 
+.statusDivider {
+  width: 1px;
+  height: 14px;
+  background: var(--color-border);
+  flex-shrink: 0;
+}
+
+/* ── Service health dot ──────────────────── */
 .statusDot {
   display: flex;
   align-items: center;
   gap: 6px;
 }
-
 .dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
   flex-shrink: 0;
 }
-
 .success { background: var(--color-success); box-shadow: 0 0 6px var(--color-success); }
 .warning { background: var(--color-warning); box-shadow: 0 0 6px var(--color-warning); }
 .danger  { background: var(--color-danger);  box-shadow: 0 0 6px var(--color-danger); }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(1.4); }
+}
+.pulse { animation: pulse 2s ease-in-out infinite; }
 
 .statusLabel {
   font-size: 12px;
   color: var(--color-text-muted);
 }
 
+/* ── Hostname ────────────────────────────── */
+.hostRow {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.hostIcon {
+  font-size: 11px;
+  color: var(--color-pi);
+  line-height: 1;
+}
+.hostLabel {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Clock ───────────────────────────────── */
+.clock {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.clockTime {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+.clockDate {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+/* ── 3-segment theme toggle ──────────────── */
+.themeSegment {
+  display: flex;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.themeSegBtn {
+  background: none;
+  border: none;
+  border-right: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: 13px;
+  padding: 5px 9px;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+  line-height: 1;
+  font-family: inherit;
+}
+.themeSegBtn:last-child { border-right: none; }
+.themeSegBtn:hover {
+  background: var(--color-surface-2);
+  color: var(--color-text);
+}
+.themeSegBtnActive {
+  background: color-mix(in srgb, var(--color-accent) 15%, var(--color-surface-2));
+  color: var(--color-accent);
+}
+
+/* ── Icon buttons ────────────────────────── */
 .iconBtn {
   background: none;
   border: none;
@@ -106,22 +184,21 @@
   border-radius: var(--radius);
   transition: background var(--transition), color var(--transition);
 }
-
 .iconBtn:hover {
   background: var(--color-surface-2);
   color: var(--color-text);
 }
-
-.themeBtn {
-  font-size: 14px;
+.settingsBtn {
   border: 1px solid var(--color-border);
-  padding: 5px 9px;
+  padding: 5px 8px;
+  font-size: 15px;
 }
-
-.themeBtn:hover {
+.settingsBtn:hover {
   border-color: color-mix(in srgb, var(--color-accent) 50%, var(--color-border));
+  color: var(--color-accent);
 }
 
+/* ── Avatar ──────────────────────────────── */
 .avatar {
   width: 30px;
   height: 30px;

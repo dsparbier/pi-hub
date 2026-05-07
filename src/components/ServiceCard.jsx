@@ -1,52 +1,78 @@
 import styles from './ServiceCard.module.css'
 
-export default function ServiceCard({ title, icon, status = 'online', description, children, size = 'medium', url, onOpenConsole }) {
+export default function ServiceCard({
+  title,
+  icon,
+  liveStatus = 'unknown',
+  latency = null,
+  sparkData = [],
+  checking = false,
+  url,
+  onOpenConsole,
+}) {
+  const statusColor = {
+    online:   '#10b981',
+    warning:  '#f59e0b',
+    offline:  '#ef4444',
+    unknown:  '#6b7280',
+  }[liveStatus] ?? '#6b7280'
+
   return (
-    <div className={`${styles.card} ${styles[size]}`}>
-      <div className={styles.header}>
-        <div className={styles.titleRow}>
-          <span className={styles.icon}>{icon}</span>
-          <h3 className={styles.title}>{title}</h3>
-        </div>
-        <div className={styles.headerRight}>
-          <StatusBadge status={status} />
-          {url && onOpenConsole && (
-            <button
-              className={styles.consoleBtn}
-              onClick={onOpenConsole}
-              title={`Open ${title} console`}
-            >
-              Open ↗
-            </button>
-          )}
-          <button className={styles.menuBtn} title="Options">⋯</button>
-        </div>
+    <div className={styles.card} style={{ borderLeftColor: statusColor }}>
+      <span className={styles.icon}>{icon}</span>
+
+      <div className={styles.title}>{title}</div>
+
+      <div className={styles.statusDot} style={{ backgroundColor: statusColor }} />
+
+      <div className={styles.latency}>
+        {checking ? '⏳' : latency !== null ? `${latency}ms` : '—'}
       </div>
 
-      <div className={styles.body}>
-        {children ?? (
-          <div className={styles.placeholder}>
-            <span className={styles.placeholderIcon}>⬡</span>
-            <p className={styles.placeholderText}>{description ?? 'Service view — placeholder'}</p>
-            {url && onOpenConsole && (
-              <button className={styles.placeholderConsoleBtn} onClick={onOpenConsole}>
-                Open Console ↗
-              </button>
-            )}
-          </div>
-        )}
-      </div>
+      <Sparkline data={sparkData} status={liveStatus} width={60} height={22} />
+
+      {onOpenConsole && (
+        <button className={styles.openBtn} onClick={onOpenConsole} title={`Open ${title} console`}>
+          ↗
+        </button>
+      )}
     </div>
   )
 }
 
-function StatusBadge({ status }) {
-  const map = {
-    online:  { label: 'Online',  cls: 'online' },
-    offline: { label: 'Offline', cls: 'offline' },
-    warning: { label: 'Warning', cls: 'warning' },
-    loading: { label: 'Loading', cls: 'loading' },
+function Sparkline({ data, status, width = 60, height = 22 }) {
+  if (!data || data.length < 2) {
+    return <svg className={styles.sparkline} width={width} height={height} />
   }
-  const { label, cls } = map[status] ?? map.loading
-  return <span className={`${styles.badge} ${styles[cls]}`}>{label}</span>
+
+  const maxLatency = 3000
+  const points = data.map((val, i) => {
+    const x = (i / (data.length - 1)) * width
+    const clamped = Math.min(val ?? 0, maxLatency)
+    const y = height - (clamped / maxLatency) * (height - 4)
+    return `${x},${y}`
+  })
+
+  const statusColor = {
+    online: '#10b981',
+    warning: '#f59e0b',
+    offline: '#ef4444',
+  }[status] ?? '#6b7280'
+
+  const lastX = (width * (data.length - 1)) / (data.length - 1)
+  const lastVal = Math.min(data[data.length - 1] ?? 0, maxLatency)
+  const lastY = height - (lastVal / maxLatency) * (height - 4)
+
+  return (
+    <svg className={styles.sparkline} width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
+      <polyline
+        points={points.join(' ')}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        vectorEffect="non-scaling-stroke"
+      />
+      <circle cx={lastX} cy={lastY} r="2.5" fill={statusColor} />
+    </svg>
+  )
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Navbar from './components/Navbar.jsx'
 import Sidebar from './components/Sidebar.jsx'
 import Dashboard from './components/Dashboard.jsx'
@@ -6,9 +6,11 @@ import ServiceConsole from './components/ServiceConsole.jsx'
 import ManageServices from './components/ManageServices.jsx'
 import EditLayout from './components/EditLayout.jsx'
 import LogViewer from './components/LogViewer.jsx'
+import Settings from './components/Settings.jsx'
 import initialServices from './config/services.js'
 import initialGroups from './config/groups.js'
 import { useTheme } from './hooks/useTheme.js'
+import { useConfig } from './hooks/useConfig.js'
 import styles from './App.module.css'
 
 const DASHBOARD_VIEW = { id: 'dashboard', label: 'Dashboard', icon: '⬡' }
@@ -19,15 +21,24 @@ function slugify(label) {
 
 export default function App() {
   const { theme, setTheme, accentIndex, setAccent } = useTheme()
+  const { config, setConfig } = useConfig()
 
-  const [services, setServices] = useState(initialServices)
-  const [groups, setGroups] = useState(initialGroups)
+  const [services, setServices] = useState(
+    () => JSON.parse(localStorage.getItem('ph-services')) ?? initialServices
+  )
+  const [groups, setGroups] = useState(
+    () => JSON.parse(localStorage.getItem('ph-groups')) ?? initialGroups
+  )
+  useEffect(() => { localStorage.setItem('ph-services', JSON.stringify(services)) }, [services])
+  useEffect(() => { localStorage.setItem('ph-groups', JSON.stringify(groups)) }, [groups])
+
   const [activeView, setActiveView] = useState('dashboard')
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [collapsedGroups, setCollapsedGroups] = useState(new Set())
   const [manageOpen, setManageOpen] = useState(false)
   const [editLayoutOpen, setEditLayoutOpen] = useState(false)
   const [logViewerOpen, setLogViewerOpen] = useState(false)
+  const [settingsOpen, setSettingsOpen] = useState(false)
   const [consoleService, setConsoleService] = useState(null)
 
   function handleToggleGroup(groupId) {
@@ -96,6 +107,9 @@ export default function App() {
         onMenuToggle={() => setSidebarOpen(o => !o)}
         theme={theme}
         onThemeToggle={setTheme}
+        services={services}
+        config={config}
+        onSettingsOpen={() => setSettingsOpen(true)}
       />
       <div className={styles.body}>
         <Sidebar
@@ -159,6 +173,18 @@ export default function App() {
           onEditGroup={handleEditGroup}
           onDeleteGroup={handleDeleteGroup}
           onClose={() => setEditLayoutOpen(false)}
+        />
+      )}
+
+      {settingsOpen && (
+        <Settings
+          config={config}
+          onSave={setConfig}
+          theme={theme}
+          setTheme={setTheme}
+          accentIndex={accentIndex}
+          setAccent={setAccent}
+          onClose={() => setSettingsOpen(false)}
         />
       )}
     </div>
