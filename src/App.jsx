@@ -45,16 +45,6 @@ export default function App() {
   useEffect(() => { localStorage.setItem('ph-groups', JSON.stringify(groups)) }, [groups])
   useEffect(() => { localStorage.setItem('ph-sidebar-open', JSON.stringify(sidebarOpen)) }, [sidebarOpen])
   useEffect(() => { localStorage.setItem('ph-collapsed-groups', JSON.stringify([...collapsedGroups])) }, [collapsedGroups])
-
-  useEffect(() => {
-    const prevConfig = JSON.parse(localStorage.getItem('ph-config-hash') ?? '{}')
-    const currentHash = JSON.stringify(config)
-    if (prevConfig !== currentHash && Object.keys(prevConfig).length > 0) {
-      localStorage.removeItem('ph-services')
-      setServices(initialServices)
-    }
-    localStorage.setItem('ph-config-hash', JSON.stringify(config))
-  }, [config])
   const [manageOpen, setManageOpen] = useState(false)
   const [editLayoutOpen, setEditLayoutOpen] = useState(false)
   const [logViewerOpen, setLogViewerOpen] = useState(false)

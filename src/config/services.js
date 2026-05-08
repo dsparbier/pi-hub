@@ -26,6 +26,7 @@ const services = [
     group: 'infrastructure',
     status: 'online',
     url: 'http://adguard.pi-hub.local',
+    embeddable: false,
     links: [],
     healthChecks: {
       custom: [

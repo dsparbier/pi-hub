@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { ACCENT_PRESETS } from '../hooks/useTheme.js'
 import { REFRESH_OPTIONS, TIMEOUT_OPTIONS } from '../hooks/useConfig.js'
 import styles from './Settings.module.css'
@@ -18,15 +17,8 @@ export default function Settings({
   setAccent,
   onClose,
 }) {
-  const [form, setForm] = useState({ ...config })
-
   function set(key, value) {
-    setForm(f => ({ ...f, [key]: value }))
-  }
-
-  function handleSave() {
-    onSave(form)
-    onClose()
+    onSave({ ...config, [key]: value })
   }
 
   return (
@@ -50,7 +42,7 @@ export default function Settings({
             <Field label="Hub Name" hint="Displayed in the sidebar and browser title">
               <input
                 className={styles.input}
-                value={form.hubName}
+                value={config.hubName}
                 onChange={e => set('hubName', e.target.value)}
                 placeholder="Pi-Hub"
               />
@@ -59,7 +51,7 @@ export default function Settings({
             <Field label="Hostname / IP" hint="Used in the status bar and health check base URLs">
               <input
                 className={styles.input}
-                value={form.hostname}
+                value={config.hostname}
                 onChange={e => set('hostname', e.target.value)}
                 placeholder="192.168.1.100"
               />
@@ -68,7 +60,7 @@ export default function Settings({
             <Field label="Local Domain" hint="Base domain for service URLs (e.g. pi-hub.local)">
               <input
                 className={styles.input}
-                value={form.localDomain}
+                value={config.localDomain}
                 onChange={e => set('localDomain', e.target.value)}
                 placeholder="pi-hub.local"
               />
@@ -86,7 +78,7 @@ export default function Settings({
                 {REFRESH_OPTIONS.map(opt => (
                   <button
                     key={opt.value}
-                    className={`${styles.segBtn} ${form.healthRefreshMs === opt.value ? styles.segBtnActive : ''}`}
+                    className={`${styles.segBtn} ${config.healthRefreshMs === opt.value ? styles.segBtnActive : ''}`}
                     onClick={() => set('healthRefreshMs', opt.value)}
                   >
                     {opt.label}
@@ -100,7 +92,7 @@ export default function Settings({
                 {TIMEOUT_OPTIONS.map(opt => (
                   <button
                     key={opt.value}
-                    className={`${styles.segBtn} ${form.healthTimeoutMs === opt.value ? styles.segBtnActive : ''}`}
+                    className={`${styles.segBtn} ${config.healthTimeoutMs === opt.value ? styles.segBtnActive : ''}`}
                     onClick={() => set('healthTimeoutMs', opt.value)}
                   >
                     {opt.label}
@@ -159,11 +151,6 @@ export default function Settings({
             </Field>
           </section>
 
-        </div>
-
-        <div className={styles.drawerFooter}>
-          <button className={styles.cancelBtn} onClick={onClose}>Cancel</button>
-          <button className={styles.saveBtn} onClick={handleSave}>Save Changes</button>
         </div>
       </aside>
     </>

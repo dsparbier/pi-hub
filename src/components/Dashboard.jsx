@@ -24,7 +24,7 @@ export default function Dashboard({ activeView, views, services, onOpenConsole }
         </div>
         <div className={styles.pageActions}>
           <button className={styles.btn}>Refresh</button>
-          {activeService?.url && (
+          {activeService?.url && activeService?.embeddable !== false && (
             <button
               className={`${styles.btn} ${styles.btnConsole}`}
               onClick={() => onOpenConsole(activeService)}
@@ -78,7 +78,7 @@ function DashboardOverview({ services, onOpenConsole }) {
                 <ServiceCardWithHealth
                   key={service.id}
                   service={service}
-                  onOpenConsole={service.url ? () => onOpenConsole(service) : undefined}
+                  onOpenConsole={service.url && service.embeddable !== false ? () => onOpenConsole(service) : undefined}
                 />
               ))}
             </div>
@@ -96,7 +96,7 @@ function DashboardOverview({ services, onOpenConsole }) {
               <ServiceCardWithHealth
                 key={service.id}
                 service={service}
-                onOpenConsole={service.url ? () => onOpenConsole(service) : undefined}
+                onOpenConsole={service.url && service.embeddable !== false ? () => onOpenConsole(service) : undefined}
               />
             ))}
           </div>
