@@ -18,7 +18,14 @@
       "Bash(ssh -o StrictHostKeyChecking=no dieter@192.168.68.115 \"docker inspect nginx-proxy-manager --format '{{range .Mounts}}{{.Source}} -> {{.Destination}}{{println}}{{end}}'\")",
       "Bash(ssh -o *)",
       "Bash(git commit -m ' *)",
-      "Bash('~/.local/bin/gh' issue create --title 'Feature: Secure SSH credential storage and session management' --body ' *)"
+      "Bash('~/.local/bin/gh' issue create --title 'Feature: Secure SSH credential storage and session management' --body ' *)",
+      "Bash(git -C /home/dieter/projects/pi-hub log --oneline -5)",
+      "Bash(ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -o ConnectTimeout=10 dieter@192.168.68.115 'echo connected && docker ps --filter name=pi-hub --format \"table {{.Names}}\\\\t{{.Status}}\\\\t{{.Ports}}\"')",
+      "Bash(docker compose *)",
+      "Bash(git -C /home/dieter/projects/pi-hub add package.json src/components/Sidebar.jsx docs/UI_MANIFEST.md)",
+      "Bash(git -C /home/dieter/projects/pi-hub commit -m ' *)",
+      "Bash(git -C /home/dieter/projects/pi-hub push)",
+      "Bash(git commit *)"
     ]
   }
 }

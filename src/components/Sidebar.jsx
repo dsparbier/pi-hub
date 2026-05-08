@@ -42,6 +42,7 @@ export default function Sidebar({
   onOpenLogs,
   onReorderService,
   onMoveServiceToGroup,
+  version,
 }) {
   const [drag, _setDrag] = useState(EMPTY_DRAG)
   const dragRef = useRef(EMPTY_DRAG)
@@ -217,7 +218,7 @@ export default function Sidebar({
 
       {open && (
         <div className={styles.footer}>
-          <span className={styles.version}>Pi-Hub v0.1.0</span>
+          <span className={styles.version}>Pi-Hub v{version}</span>
         </div>
       )}
     </aside>

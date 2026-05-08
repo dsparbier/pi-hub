@@ -10,6 +10,7 @@
  *   group        – sidebar group id (see groups.js) or omit for ungrouped
  *   status       – 'online' | 'offline' | 'warning' | 'loading'
  *   url          – console URL for the embedded viewer
+ *   links        – optional array of { id, label, url } for service-specific links
  *   healthChecks – optional custom HTTP checks shown in the Health panel
  *     .custom[]  – { id, label, method: 'GET'|'POST', url, body? }
  */
@@ -25,6 +26,7 @@ const services = [
     group: 'infrastructure',
     status: 'online',
     url: 'http://adguard.pi-hub.local',
+    links: [],
     healthChecks: {
       custom: [
         { id: 'status-api', label: 'Status API', method: 'GET',  url: 'http://adguard.pi-hub.local/control/status' },
@@ -41,6 +43,7 @@ const services = [
     group: 'infrastructure',
     status: 'online',
     url: 'http://nginx-proxy.pi-hub.local',
+    links: [],
     healthChecks: {
       custom: [
         { id: 'proxy-ui', label: 'Proxy UI',  method: 'GET', url: 'http://nginx-proxy.pi-hub.local' },
@@ -57,6 +60,7 @@ const services = [
     group: 'infrastructure',
     status: 'online',
     url: 'http://portainer.pi-hub.local',
+    links: [],
     healthChecks: {
       custom: [
         { id: 'api-status', label: 'API Status', method: 'GET', url: 'http://portainer.pi-hub.local/api/status' },
@@ -74,6 +78,7 @@ const services = [
     group: 'monitoring',
     status: 'online',
     url: 'http://uptime-kuma.pi-hub.local',
+    links: [],
   },
   {
     id: 'netdata',
@@ -84,6 +89,7 @@ const services = [
     group: 'monitoring',
     status: 'online',
     url: 'http://netdata.pi-hub.local',
+    links: [],
     healthChecks: {
       custom: [
         { id: 'api-info', label: 'API Info', method: 'GET', url: 'http://netdata.pi-hub.local/api/v1/info' },
@@ -99,6 +105,7 @@ const services = [
     group: 'monitoring',
     status: 'online',
     url: 'http://beszel.pi-hub.local',
+    links: [],
   },
   {
     id: 'speedtest-tracker',
@@ -109,6 +116,7 @@ const services = [
     group: 'monitoring',
     status: 'online',
     url: 'http://speedtest-tracker.pi-hub.local',
+    links: [],
   },
   {
     id: 'openspeedtest',
@@ -119,6 +127,7 @@ const services = [
     group: 'monitoring',
     status: 'online',
     url: 'http://openspeedtest.pi-hub.local',
+    links: [],
   },
 
   // ── AI & Agents ──────────────────────────────────────────────────
@@ -131,6 +140,7 @@ const services = [
     group: 'ai',
     status: 'online',
     url: 'http://open-webui.pi-hub.local',
+    links: [],
   },
   {
     id: 'jarvis',
@@ -141,6 +151,7 @@ const services = [
     group: 'ai',
     status: 'online',
     url: 'http://jarvis.ai.local',
+    links: [],
   },
   {
     id: 'derek',
@@ -151,6 +162,7 @@ const services = [
     group: 'ai',
     status: 'online',
     url: 'http://derek.ai.local',
+    links: [],
   },
   {
     id: 'lois',
@@ -161,6 +173,7 @@ const services = [
     group: 'ai',
     status: 'online',
     url: 'http://lois.ai.local',
+    links: [],
   },
   {
     id: 'pepper',
@@ -171,6 +184,7 @@ const services = [
     group: 'ai',
     status: 'online',
     url: 'http://pepper.ai.local',
+    links: [],
   },
   {
     id: 'alfred',
@@ -181,6 +195,7 @@ const services = [
     group: 'ai',
     status: 'online',
     url: 'http://alfred.ai.local',
+    links: [],
   },
 
   // ── Data & Tools ─────────────────────────────────────────────────
@@ -193,6 +208,7 @@ const services = [
     group: 'data-tools',
     status: 'online',
     url: 'http://n8n.pi-hub.local',
+    links: [],
   },
   {
     id: 'sql-hub',
@@ -203,6 +219,7 @@ const services = [
     group: 'data-tools',
     status: 'online',
     url: 'http://192.168.68.115:1234',
+    links: [],
   },
   {
     id: 'pocketbase',
@@ -213,6 +230,7 @@ const services = [
     group: 'data-tools',
     status: 'online',
     url: 'http://pocketbase.pi-hub.local',
+    links: [],
     healthChecks: {
       custom: [
         { id: 'health', label: 'Health', method: 'GET', url: 'http://pocketbase.pi-hub.local/api/health' },
@@ -228,6 +246,7 @@ const services = [
     group: 'data-tools',
     status: 'online',
     url: 'http://tool-hub.pi-hub.local',
+    links: [],
   },
 ]
 

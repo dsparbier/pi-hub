@@ -11,6 +11,7 @@ import initialServices from './config/services.js'
 import initialGroups from './config/groups.js'
 import { useTheme } from './hooks/useTheme.js'
 import { useConfig } from './hooks/useConfig.js'
+import { version } from './version.js'
 import styles from './App.module.css'
 
 const DASHBOARD_VIEW = { id: 'dashboard', label: 'Dashboard', icon: '⬡' }
@@ -29,12 +30,31 @@ export default function App() {
   const [groups, setGroups] = useState(
     () => JSON.parse(localStorage.getItem('ph-groups')) ?? initialGroups
   )
+  const [activeView, setActiveView] = useState('dashboard')
+  const [sidebarOpen, setSidebarOpen] = useState(
+    () => JSON.parse(localStorage.getItem('ph-sidebar-open') ?? 'true')
+  )
+  const [collapsedGroups, setCollapsedGroups] = useState(
+    () => {
+      const groupsData = JSON.parse(localStorage.getItem('ph-groups')) ?? initialGroups
+      return new Set(groupsData.map(g => g.id))
+    }
+  )
+
   useEffect(() => { localStorage.setItem('ph-services', JSON.stringify(services)) }, [services])
   useEffect(() => { localStorage.setItem('ph-groups', JSON.stringify(groups)) }, [groups])
+  useEffect(() => { localStorage.setItem('ph-sidebar-open', JSON.stringify(sidebarOpen)) }, [sidebarOpen])
+  useEffect(() => { localStorage.setItem('ph-collapsed-groups', JSON.stringify([...collapsedGroups])) }, [collapsedGroups])
 
-  const [activeView, setActiveView] = useState('dashboard')
-  const [sidebarOpen, setSidebarOpen] = useState(true)
-  const [collapsedGroups, setCollapsedGroups] = useState(new Set())
+  useEffect(() => {
+    const prevConfig = JSON.parse(localStorage.getItem('ph-config-hash') ?? '{}')
+    const currentHash = JSON.stringify(config)
+    if (prevConfig !== currentHash && Object.keys(prevConfig).length > 0) {
+      localStorage.removeItem('ph-services')
+      setServices(initialServices)
+    }
+    localStorage.setItem('ph-config-hash', JSON.stringify(config))
+  }, [config])
   const [manageOpen, setManageOpen] = useState(false)
   const [editLayoutOpen, setEditLayoutOpen] = useState(false)
   const [logViewerOpen, setLogViewerOpen] = useState(false)
@@ -126,6 +146,7 @@ export default function App() {
           onOpenLogs={() => setLogViewerOpen(true)}
           onReorderService={handleReorderService}
           onMoveServiceToGroup={handleMoveServiceToGroup}
+          version={version}
         />
         <main className={`${styles.main} ${consoleService ? styles.mainConsole : ''}`}>
           {consoleService ? (

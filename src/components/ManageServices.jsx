@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import styles from './ManageServices.module.css'
 
-const EMPTY_FORM = { label: '', icon: '', description: '', url: '', dashboardUrl: '', homeUrl: '', adminUrl: '', status: 'online', group: '' }
+const EMPTY_FORM = { label: '', icon: '', description: '', url: '', dashboardUrl: '', homeUrl: '', adminUrl: '', status: 'online', group: '', links: [] }
 const STATUS_OPTIONS = ['online', 'offline', 'warning', 'loading']
 
 export default function ManageServices({ services, groups, onClose, onAdd, onEdit, onDelete }) {
@@ -235,6 +235,11 @@ function ServiceForm({ initialValues, groups = [], onSave, onCancel, isNew }) {
         </select>
       </div>
 
+      <ServiceLinks
+        links={form.links || []}
+        onChange={links => set('links', links)}
+      />
+
       <div className={styles.formActions}>
         <button type="button" className={styles.cancelBtn} onClick={onCancel}>Cancel</button>
         <button type="submit" className={styles.saveBtn}>
@@ -242,6 +247,81 @@ function ServiceForm({ initialValues, groups = [], onSave, onCancel, isNew }) {
         </button>
       </div>
     </form>
+  )
+}
+
+function ServiceLinks({ links = [], onChange }) {
+  const [newLinkLabel, setNewLinkLabel] = useState('')
+  const [newLinkUrl, setNewLinkUrl] = useState('')
+
+  function handleAddLink() {
+    if (!newLinkLabel.trim() || !newLinkUrl.trim()) return
+    const newLink = {
+      id: `link-${Date.now()}`,
+      label: newLinkLabel.trim(),
+      url: newLinkUrl.trim()
+    }
+    onChange([...links, newLink])
+    setNewLinkLabel('')
+    setNewLinkUrl('')
+  }
+
+  function handleDeleteLink(linkId) {
+    onChange(links.filter(l => l.id !== linkId))
+  }
+
+  return (
+    <div className={styles.formGroup}>
+      <label className={styles.formLabel}>Service Links</label>
+      <div className={styles.linksSection}>
+        {links.length > 0 && (
+          <div className={styles.linksList}>
+            {links.map(link => (
+              <div key={link.id} className={styles.linkItem}>
+                <div className={styles.linkInfo}>
+                  <div className={styles.linkLabel}>{link.label}</div>
+                  <div className={styles.linkUrl}>{link.url}</div>
+                </div>
+                <button
+                  type="button"
+                  className={styles.deleteLinkBtn}
+                  onClick={() => handleDeleteLink(link.id)}
+                  title="Delete link"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className={styles.addLinkForm}>
+          <input
+            className={styles.formInput}
+            placeholder="Link label (e.g., 'Dashboard')"
+            value={newLinkLabel}
+            onChange={e => setNewLinkLabel(e.target.value)}
+            onKeyPress={e => e.key === 'Enter' && handleAddLink()}
+          />
+          <input
+            className={styles.formInput}
+            placeholder="URL (e.g., https://…/dashboard)"
+            value={newLinkUrl}
+            onChange={e => setNewLinkUrl(e.target.value)}
+            onKeyPress={e => e.key === 'Enter' && handleAddLink()}
+            type="url"
+          />
+          <button
+            type="button"
+            className={styles.addLinkBtn}
+            onClick={handleAddLink}
+            disabled={!newLinkLabel.trim() || !newLinkUrl.trim()}
+          >
+            Add
+          </button>
+        </div>
+      </div>
+    </div>
   )
 }
 
