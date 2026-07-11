@@ -3,3 +3,7 @@ dist/
 .env
 .env.local
 *.log
+
+# Editor-specific (personal IDE settings, not project config)
+.vscode/
+*.code-workspace
