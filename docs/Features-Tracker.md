@@ -10,6 +10,7 @@
 - ✅ Service-specific links with tabbed console view (`ServiceConsole`)
 - ✅ Configuration retention fix (`App.jsx`, v1.5.6)
 - ✅ Editor-specific files (`.vscode/`, `*.code-workspace`) excluded from version control
+- ✅ Project slash-commands (`clean-project`, `commit-code`) versioned under `.claude/commands/`
 
 ## Next Planned Features (Phase 2+)
 

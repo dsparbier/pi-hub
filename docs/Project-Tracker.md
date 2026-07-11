@@ -1,12 +1,15 @@
 # Pi-Hub Project Tracker
 
 ## Current Version
-1.5.7
+1.5.8
 
 ## Overview
 Pi-Hub is a self-hosted front-end portal for a Raspberry Pi device (React 18 + Vite 5, CSS Modules, no UI library), served via a Docker multi-stage build (Nginx). See [UI_MANIFEST.md](./UI_MANIFEST.md) for the full design spec.
 
 ## Session Log
+
+### 2026-07-11 (2)
+- Versioned the `.claude/commands/` slash-command definitions (`clean-project.md`, `commit-code.md`) that had been left untracked by the prior session — the user asked for these to be committed manually.
 
 ### 2026-07-11
 - Ran `/clean-project`: reviewed folder structure (no drift found, nothing to move or purge), added `.vscode/` and `*.code-workspace` to `.gitignore` since those files hold personal Peacock/editor color settings rather than shared project config.
