@@ -1,5 +1,10 @@
 # Pi-Hub Bugs Tracker
 
+> **Migrated to DEV-Hub (2026-07-12).** Bugs are now tracked in DEV-Hub under the `pi-hub`
+> project (id 24, bug ids 89–91). Use `/create-bug`, `/update-bug`, `/delete-bug`, and
+> `/review-bugs` instead of editing this file — see `docs/dev-hub-sync.md`. The content below is
+> an archived pre-migration snapshot, kept for history only.
+
 ## Known Issues / Pending
 
 - None open at this time.

@@ -1,5 +1,11 @@
 # Pi-Hub Features Tracker
 
+> **Migrated to DEV-Hub (2026-07-12).** Features (and future enhancements) are now tracked in
+> DEV-Hub under the `pi-hub` project (id 24, feature ids 116–124). Use `/create-feature`,
+> `/update-feature`, `/delete-feature`, `/create-enhancement`, and `/review-features` /
+> `/review-enhancements` instead of editing this file — see `docs/dev-hub-sync.md`. The content
+> below is an archived pre-migration snapshot, kept for history only.
+
 ## Feature Status
 
 - ✅ Dynamic sidebar groups with drag-and-drop reordering

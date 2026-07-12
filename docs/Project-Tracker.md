@@ -1,12 +1,25 @@
 # Pi-Hub Project Tracker
 
 ## Current Version
-1.5.8
+1.5.9
 
 ## Overview
 Pi-Hub is a self-hosted front-end portal for a Raspberry Pi device (React 18 + Vite 5, CSS Modules, no UI library), served via a Docker multi-stage build (Nginx). See [UI_MANIFEST.md](./UI_MANIFEST.md) for the full design spec.
 
 ## Session Log
+
+### 2026-07-12
+- Migrated bug/feature/enhancement tracking to DEV-Hub per `docs/dev-hub-sync.md`. Created the
+  `pi-hub` project in DEV-Hub (id 24), migrated the 3 resolved bugs from `Bugs-Tracker.md` (ids
+  89–91, all `status: resolved`) and the 9 done features from `Features-Tracker.md` (ids 116–124,
+  all `status: done`, `phase-1`). No enhancements migrated — the "Next Planned Features" backlog
+  was empty. `docs/Bugs-Tracker.md` and `docs/Features-Tracker.md` now carry a migration notice at
+  the top; their original content is kept below as an archived snapshot. Evaluated
+  `docs/READ-ME.dev-hub-logging.md` (Auto-Logging + "Report to DEV-Hub" menu) but skipped it per
+  user decision — pi-hub is a pure static frontend (React/Vite, nginx-served, no backend process,
+  settings in `localStorage`), so the doc's assumed Python backend/routers/log-watching don't have
+  anywhere to attach without a larger architecture change; revisit if pi-hub ever grows a backend
+  service. Version bumped to 1.5.9 (docs-only change, no app code touched).
 
 ### 2026-07-11 (2)
 - Versioned the `.claude/commands/` slash-command definitions (`clean-project.md`, `commit-code.md`) that had been left untracked by the prior session — the user asked for these to be committed manually.
