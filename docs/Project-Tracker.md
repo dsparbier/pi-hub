@@ -8,6 +8,16 @@ Pi-Hub is a self-hosted front-end portal for a Raspberry Pi device (React 18 + V
 
 ## Session Log
 
+### 2026-07-16
+- Added `docs/BUG-FIX-PLAN.md`: a risk-ordered remediation plan covering every currently-open
+  DEV-Hub bug/enhancement/feature for this project (15 bugs, 6 enhancements, 4 features), each
+  with root cause, concrete fix approach grounded in current code, files touched, and a
+  verification step, grouped into three phases (critical, functional correctness, hardening &
+  cleanup) for a future Claude Code session to execute. Produced from a full-codebase audit; no
+  app code changed and no DEV-Hub statuses touched — each item gets flipped to done via
+  `/update-bug`/`/update-enhancement`/`/update-feature` as it's completed. No version bump
+  (docs-only).
+
 ### 2026-07-12
 - Migrated bug/feature/enhancement tracking to DEV-Hub per `docs/dev-hub-sync.md`. Created the
   `pi-hub` project in DEV-Hub (id 24), migrated the 3 resolved bugs from `Bugs-Tracker.md` (ids
