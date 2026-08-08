@@ -9,16 +9,16 @@ Pi-Hub is a self-hosted front-end portal for a Raspberry Pi device (React 18 + V
 ## Session Log
 
 ### 2026-08-08
-- Fleet-wide docker-compose networking audit (all ~12 hub projects, not pi-hub-specific): removed
-  the dangling `pi-hub-network` external network reference from sql-hub's compose file (nothing in
-  this repo ever created it). This repo's own `docker-compose.yml` was already self-contained
-  (single service, no cross-project network) — only additions here were DNS/IPv4 hardening: pinned
-  `dns: [192.168.68.115, 192.168.68.57, 1.1.1.1]` (Pi-Hub's AdGuard/NGINX resolver, WiFi + eth0,
-  then public fallback) and `sysctls: net.ipv6.conf.all.disable_ipv6=1` (IPv6 was causing local
-  connectivity issues). No app code changed. DEV-Hub was unreachable at commit time (its SQL-Hub
-  backend at `sql-hub.pi-hub.local` timed out — a separate, newly-found connectivity bug, not
-  caused by this session's changes) so no bug was logged there; flagged to the user directly
-  instead. No version-relevant behavior change beyond the container config, hence a patch bump.
+- Fleet-wide docker-compose networking audit (`/align-docker-conf across all projects`, all ~12
+  hub projects, not pi-hub-specific): this repo's own `docker-compose.yml` was already
+  self-contained (single service, no cross-project network) — the only addition here was DNS/IPv4
+  hardening: pinned `dns: [192.168.68.115, 192.168.68.57, 1.1.1.1]` (Pi-Hub's AdGuard/NGINX
+  resolver, WiFi + eth0, then public fallback) and `sysctls: net.ipv6.conf.all.disable_ipv6=1`
+  (IPv6 was causing local connectivity issues). Elsewhere in the same audit, removed the dangling
+  `pi-hub-network` external network reference from sql-hub's compose file (nothing in this repo
+  ever created it) and a similar `dev-hub_default` reference from invest-hub's. No app code
+  changed here; `package.json`/`src/version.js` bumped to 1.5.10 (patch) to keep the version-sync
+  convention this project already follows. Logged and resolved as DEV-Hub bug #187.
 
 ### 2026-07-16
 - Added `docs/BUG-FIX-PLAN.md`: a risk-ordered remediation plan covering every currently-open
