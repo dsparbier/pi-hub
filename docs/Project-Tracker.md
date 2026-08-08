@@ -1,12 +1,24 @@
 # Pi-Hub Project Tracker
 
 ## Current Version
-1.5.9
+1.5.10
 
 ## Overview
 Pi-Hub is a self-hosted front-end portal for a Raspberry Pi device (React 18 + Vite 5, CSS Modules, no UI library), served via a Docker multi-stage build (Nginx). See [UI_MANIFEST.md](./UI_MANIFEST.md) for the full design spec.
 
 ## Session Log
+
+### 2026-08-08
+- Fleet-wide docker-compose networking audit (all ~12 hub projects, not pi-hub-specific): removed
+  the dangling `pi-hub-network` external network reference from sql-hub's compose file (nothing in
+  this repo ever created it). This repo's own `docker-compose.yml` was already self-contained
+  (single service, no cross-project network) — only additions here were DNS/IPv4 hardening: pinned
+  `dns: [192.168.68.115, 192.168.68.57, 1.1.1.1]` (Pi-Hub's AdGuard/NGINX resolver, WiFi + eth0,
+  then public fallback) and `sysctls: net.ipv6.conf.all.disable_ipv6=1` (IPv6 was causing local
+  connectivity issues). No app code changed. DEV-Hub was unreachable at commit time (its SQL-Hub
+  backend at `sql-hub.pi-hub.local` timed out — a separate, newly-found connectivity bug, not
+  caused by this session's changes) so no bug was logged there; flagged to the user directly
+  instead. No version-relevant behavior change beyond the container config, hence a patch bump.
 
 ### 2026-07-16
 - Added `docs/BUG-FIX-PLAN.md`: a risk-ordered remediation plan covering every currently-open
