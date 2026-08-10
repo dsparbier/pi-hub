@@ -1,0 +1,12 @@
+services:
+  pi-hub:
+    # Live-only overlay per docker-manifest.md. Note: docker-compose.yml's
+    # base already binds 0.0.0.0 and sets restart: unless-stopped for this
+    # single-service static frontend, so these values are currently
+    # identical to the base rather than a real diff — kept here anyway for
+    # structural consistency with the fleet-wide 2-file split, and so a
+    # future narrowing of the base file's dev binding (e.g. back to
+    # 127.0.0.1) has an explicit live-only override already in place.
+    ports:
+      - "0.0.0.0:31106:80"
+    restart: unless-stopped
