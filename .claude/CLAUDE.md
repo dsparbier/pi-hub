@@ -38,7 +38,7 @@ repo/package/directory name means this frontend specifically.
 ## Ecosystem context
 
 This is one project among sibling "hub" apps under `~/projects/` (sql-hub, tool-hub, dev-hub,
-ai-hub, fin-hub, invest-hub, knowledge-hub, Excalibur, jarvis-ui, derek-ui, ai-hub.ollama), each
+ai-hub, fin-hub, invest-hub, knowledge-hub, excalibur, jarvis-ui, derek-ui, ai-hub.ollama), each
 an independent git repo / Docker Compose project. Standing fleet rule: **every hub is
 self-contained and HTTP-only** — no shared/external Docker networks between projects;
 cross-service calls go over published host ports (`host.docker.internal` for same-host,
