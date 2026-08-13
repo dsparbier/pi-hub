@@ -28,9 +28,11 @@ itself (see this repo's `README`/`docs/Project-Tracker.md` for that).
 
 ## Prerequisites
 
-- DEV-Hub reachable at `http://localhost:38103` with header `X-API-Key: test-devhub-key`
+- DEV-Hub reachable at `http://dev-hub.pi-hub.local` (the fleet's central instance — never the
+  disconnected local dev instance at `localhost:38103`) with header `X-API-Key: test-devhub-key`
   (hardcoded dev-only key, matches `dev-hub/.env`'s `DEV_HUB_API_KEY` — revisit if any of this
-  ever needs to run against a non-local or shared deployment).
+  ever needs to run against a non-local or shared deployment). Full connection/project-resolution
+  convention: `~/.claude/dev-hub-api.md`.
 - The slash commands below live in `~/.claude/commands/` (global, not per-repo), so they're
   already available in every project on this machine — nothing to install per-project.
 - A project is identified in DEV-Hub by a `projects` row whose `name` matches the repo's
@@ -72,8 +74,8 @@ the templated `$1`/`$2` — still check for an existing matching title first.
    don't assume they match this template exactly).
 
 2. **Resolve or create the DEV-Hub project.**
-   `GET http://localhost:38103/api/projects` and look for one whose `name` matches the repo's
-   directory name (case-insensitive). If none exists, `POST http://localhost:38103/api/projects`
+   `GET http://dev-hub.pi-hub.local/api/projects` and look for one whose `name` matches the repo's
+   directory name (case-insensitive). If none exists, `POST http://dev-hub.pi-hub.local/api/projects`
    with `{"name": "<repo name>", "status": "active"}` — or just let the first `/create-bug` /
    `/create-feature` call do this automatically.
 
