@@ -61,6 +61,11 @@ DEV-Hub auto-logging/report-menu integration (the pattern documented in
 pi-hub has none (static frontend, nginx-served, settings in `localStorage`). Revisit only if
 this app ever grows a backend service.
 
+**Fleet-wide SQL default** (`~/projects/CLAUDE.md`'s "Application Fleet Architecture", added
+2026-08-15): every hub should default SQL database sources to a SQL-Hub service over a local
+DB. N/A here — this repo is a pure static frontend with no backend process and no database
+of any kind (config lives in browser `localStorage`) — but applies if that ever changes.
+
 ## Tech stack
 
 - **React** 18.3, **Vite** 5.4 (`@vitejs/plugin-react`), CSS Modules per-component
