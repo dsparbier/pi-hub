@@ -1,9 +1,16 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pi-Hub</title>
+    <title>Pi-Hub Fleet Console</title>
+    <script>
+      /* pre-paint theme + density (fleet-ui) */
+      !function(){try{var d=document.documentElement,t=localStorage.getItem("fleet.theme")||"system",n=localStorage.getItem("fleet.density")||"comfortable";["system","light","dark","ambient","high-contrast"].indexOf(t)<0&&(t="system");"system"===t?d.removeAttribute("data-theme"):d.setAttribute("data-theme",t);"compact"===n?d.setAttribute("data-density","compact"):d.removeAttribute("data-density")}catch(e){}}();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;450;500;600;700&display=swap" />
   </head>
   <body>
     <div id="root"></div>

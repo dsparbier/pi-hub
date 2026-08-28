@@ -1,0 +1,281 @@
+/* ============================================================================
+   FLEET APP SHELL — app-shell.css
+   Fleet UI Standard §5–§7. Import AFTER tokens.css, BEFORE any app CSS.
+   All colours come from tokens.css custom properties — never a literal here.
+   ============================================================================ */
+
+*,*::before,*::after{box-sizing:border-box}
+
+/* ---------------------------------------------------------------- shell grid */
+.fleet-shell{
+  display:grid;
+  grid-template-columns:var(--sidemenu-w) 1fr;
+  grid-template-rows:auto 1fr;
+  grid-template-areas:"titlebar titlebar" "sidemenu content";
+  min-height:100dvh;
+}
+.fleet-shell[data-rail="rail"]{--sidemenu-w:var(--sidemenu-rail)}
+@media (prefers-reduced-motion:no-preference){
+  .fleet-shell{transition:grid-template-columns .16s ease}
+}
+
+/* ------------------------------------------------------------------ titlebar */
+.fleet-titlebar{
+  grid-area:titlebar;
+  position:sticky; top:0; z-index:40; height:var(--titlebar-h);
+  display:flex; align-items:center; gap:12px; padding:0 16px;
+  background:var(--surface);
+  border-bottom:var(--line-weight) solid var(--line);
+}
+.fleet-titlebar.scrolled{box-shadow:var(--shadow)}
+.fleet-titlebar .mark{width:18px;height:18px;border-radius:5px;background:var(--accent);flex:none}
+.fleet-titlebar .app-name{
+  font-family:"IBM Plex Mono",monospace;font-size:15px;letter-spacing:-.01em;font-weight:600;
+  white-space:nowrap;
+}
+.fleet-titlebar .spacer{flex:1}
+.fleet-titlebar .status-dot{width:8px;height:8px;border-radius:50%;background:var(--idle);flex:none}
+.fleet-titlebar .status-dot.ok{background:var(--ok)}
+.fleet-titlebar .status-dot.warn{background:var(--warn)}
+.fleet-titlebar .status-dot.stop{background:var(--stop)}
+
+/* icon button — used in the titlebar and side-menu footer */
+.fleet-iconbtn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:32px;height:32px;flex:none;
+  border:0;background:transparent;color:var(--muted);cursor:pointer;
+  border-radius:var(--radius-control);
+}
+.fleet-iconbtn:hover{background:var(--surface-2);color:var(--ink)}
+.fleet-iconbtn svg{width:18px;height:18px}
+
+/* ------------------------------------------------------------------ sidemenu */
+.fleet-sidemenu{
+  grid-area:sidemenu;
+  position:sticky; top:var(--titlebar-h); align-self:start;
+  height:calc(100dvh - var(--titlebar-h)); overflow-y:auto;
+  background:var(--surface);
+  border-right:var(--line-weight) solid var(--line);
+  display:flex; flex-direction:column;
+}
+.fleet-sidemenu .group-label{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--muted);
+  padding:14px 14px 6px;
+}
+.fleet-nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 12px;margin:1px 8px;
+  border-radius:var(--radius-control);
+  font-size:13px;color:var(--muted);cursor:pointer;
+  text-decoration:none;
+  border:0;background:transparent;width:calc(100% - 16px);text-align:left;
+}
+.fleet-nav-item:hover{background:var(--surface-2);color:var(--ink)}
+.fleet-nav-item[aria-current="page"]{
+  color:var(--ink);
+  background:color-mix(in srgb,var(--accent) 12%,transparent);
+  box-shadow:inset 3px 0 0 var(--accent);
+}
+.fleet-nav-item .icon{width:18px;height:18px;flex:none;display:inline-flex}
+.fleet-nav-item .icon svg{width:18px;height:18px}
+.fleet-nav-item .label{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fleet-nav-item .count{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted)}
+.fleet-sidemenu .footer{
+  margin-top:auto;
+  border-top:var(--line-weight) solid var(--line);
+  padding:10px;
+  display:flex;flex-direction:column;gap:8px;
+}
+@media (prefers-reduced-motion:no-preference){
+  .fleet-nav-item{transition:background .12s,color .12s}
+}
+
+/* rail mode — labels + group headers hidden, items centred, tooltip on hover */
+.fleet-shell[data-rail="rail"] .fleet-sidemenu .group-label,
+.fleet-shell[data-rail="rail"] .fleet-nav-item .label,
+.fleet-shell[data-rail="rail"] .fleet-nav-item .count,
+.fleet-shell[data-rail="rail"] .fleet-titlebar .app-name{display:none}
+.fleet-shell[data-rail="rail"] .fleet-nav-item{justify-content:center;margin-inline:6px;width:calc(100% - 12px)}
+.fleet-shell[data-rail="rail"] .fleet-sidemenu .footer{align-items:center}
+
+/* -------------------------------------------------- theme switch / density */
+.fleet-theme-switch{
+  display:flex;gap:2px;padding:2px;
+  background:var(--surface-2);border-radius:var(--radius-control);
+}
+.fleet-theme-switch button{
+  flex:1;border:0;background:transparent;cursor:pointer;
+  padding:5px 6px;border-radius:calc(var(--radius-control) - 2px);
+  font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:600;
+  letter-spacing:.05em;text-transform:uppercase;color:var(--muted);
+  display:inline-flex;align-items:center;justify-content:center;gap:4px;
+}
+.fleet-theme-switch button svg{width:14px;height:14px}
+.fleet-theme-switch button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.fleet-shell[data-rail="rail"] .fleet-theme-switch{flex-direction:column}
+.fleet-density-toggle{
+  display:flex;align-items:center;gap:8px;
+  font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:600;
+  letter-spacing:.05em;text-transform:uppercase;color:var(--muted);
+  cursor:pointer;padding:4px 6px;
+}
+.fleet-density-toggle input{accent-color:var(--accent)}
+
+/* --------------------------------------------------------------- content */
+.fleet-content{
+  grid-area:content;
+  background:var(--ground);
+  min-width:0;   /* let wide children scroll instead of blowing out the grid */
+}
+.fleet-content > .wrap{
+  max-width:var(--content-max);margin:0 auto;
+  padding:clamp(18px,4vw,52px) clamp(16px,4vw,40px) 80px;
+}
+
+/* page header */
+.fleet-page-header h1{
+  font-size:clamp(26px,4.4vw,38px);font-weight:600;letter-spacing:-.02em;margin:6px 0 0;
+}
+.fleet-page-header .eyebrow{
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;font-weight:500;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--accent);
+}
+.fleet-page-header .lede{font-size:15px;color:var(--muted);max-width:64ch;margin:10px 0 0}
+.fleet-page-header .meta{
+  font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--muted);
+  margin-top:14px;display:flex;flex-wrap:wrap;gap:16px;
+}
+.fleet-page-header .meta b{color:var(--ink);font-weight:600}
+
+/* section + section head */
+.fleet-section{margin-top:44px}
+.fleet-sec-head{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.fleet-sec-head h2{
+  font-family:"IBM Plex Mono",monospace;font-size:12.5px;font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--ink);margin:0;white-space:nowrap;
+}
+.fleet-sec-head .rule{flex:1;height:1px;background:var(--line)}
+.fleet-sec-head .count{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted)}
+
+/* ----------------------------------------------------------- primitives */
+
+/* stat tile */
+.fleet-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:var(--gap-grid)}
+.fleet-tile{
+  background:var(--surface);border:var(--line-weight) solid var(--line);
+  border-radius:var(--radius-tile);box-shadow:var(--shadow);
+  padding:var(--pad-tile);
+}
+.fleet-tile .k{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--muted);
+}
+.fleet-tile .v{font-size:26px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-top:6px}
+.fleet-tile .v small{font-size:14px;color:var(--muted);font-weight:600}
+.fleet-tile .sub{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* accent-edged state card */
+.fleet-card{
+  background:var(--surface);border:var(--line-weight) solid var(--line);
+  border-left:4px solid var(--idle);
+  border-radius:var(--radius-card);box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.fleet-card.ok{border-left-color:var(--ok)}
+.fleet-card.warn{border-left-color:var(--warn)}
+.fleet-card.stop{border-left-color:var(--stop)}
+.fleet-card.idle{border-left-color:var(--idle)}
+.fleet-card > *{padding:var(--pad-card)}
+.fleet-card > * + *{border-top:var(--line-weight) solid var(--line)}
+.fleet-card .facts{
+  background:var(--surface-2);
+  display:grid;grid-template-columns:auto 1fr;gap:3px 12px;
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;
+}
+.fleet-card .facts dt{color:var(--muted)}
+.fleet-card .facts dd{color:var(--ink);text-align:right;margin:0}
+.fleet-card .title{font-family:"IBM Plex Mono",monospace;font-size:16px;font-weight:600;letter-spacing:-.01em}
+
+/* pill */
+.fleet-pill{
+  display:inline-flex;align-items:center;
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;font-weight:600;
+  letter-spacing:.05em;text-transform:uppercase;
+  padding:3px 7px;border-radius:calc(var(--radius-control) - 3px);
+  background:var(--idle-bg);color:var(--muted);
+}
+.fleet-pill.ok{background:var(--ok-bg);color:var(--ok)}
+.fleet-pill.warn{background:var(--warn-bg);color:var(--warn)}
+.fleet-pill.stop{background:var(--stop-bg);color:var(--stop)}
+.fleet-pill.idle{background:var(--idle-bg);color:var(--muted)}
+
+/* filter chips */
+.fleet-filter{display:flex;flex-wrap:wrap;gap:8px}
+.fleet-filter button{
+  font-family:"IBM Plex Mono",monospace;font-size:12px;
+  padding:5px 12px;border-radius:var(--radius-pill);
+  border:var(--line-weight) solid var(--line);background:var(--surface);color:var(--muted);
+  cursor:pointer;
+}
+.fleet-filter button:hover{color:var(--ink)}
+.fleet-filter button[aria-pressed="true"]{background:var(--ink);color:var(--ground);border-color:var(--ink)}
+
+/* data table */
+.fleet-scroll{overflow-x:auto;border:var(--line-weight) solid var(--line);border-radius:var(--radius-tile);background:var(--surface)}
+.fleet-scroll table{border-collapse:collapse;width:100%;font-size:13px;min-width:520px}
+.fleet-scroll th,.fleet-scroll td{
+  text-align:left;padding:0 14px;height:var(--row-h);
+  border-bottom:var(--line-weight) solid var(--line);vertical-align:middle;
+}
+.fleet-scroll th{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--muted);
+}
+.fleet-scroll tr:last-child td{border-bottom:0}
+.fleet-scroll td.num{font-variant-numeric:tabular-nums;text-align:right}
+
+/* verify / callout */
+.fleet-verify{
+  background:var(--surface);border:var(--line-weight) solid var(--line);
+  border-left:4px solid var(--ok);border-radius:var(--radius-card);
+  box-shadow:var(--shadow);padding:var(--pad-card);
+}
+.fleet-verify h3{
+  font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:.06em;
+  text-transform:uppercase;margin:0 0 10px;color:var(--ink);
+}
+.fleet-verify ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
+.fleet-verify li{position:relative;padding-left:22px;font-size:13px}
+.fleet-verify li::before{content:"\2713";position:absolute;left:0;color:var(--ok);font-weight:700}
+.fleet-verify li.x::before{content:"\00d7";color:var(--stop)}
+
+/* --------------------------------------------------------- focus & motion */
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* -------------------------------------------------- responsive: <=900px drawer */
+@media (max-width:900px){
+  .fleet-shell{
+    grid-template-columns:1fr;
+    grid-template-areas:"titlebar" "content";
+  }
+  .fleet-sidemenu{
+    position:fixed;top:var(--titlebar-h);left:0;z-index:50;
+    width:min(84vw,var(--sidemenu-w));
+    transform:translateX(-100%);
+  }
+  .fleet-shell[data-drawer="open"] .fleet-sidemenu{transform:none}
+  .fleet-shell[data-drawer="open"] .fleet-scrim{
+    position:fixed;inset:var(--titlebar-h) 0 0 0;z-index:45;
+    background:color-mix(in srgb,var(--ink) 40%,transparent);
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .fleet-sidemenu{transition:transform .18s ease}
+  }
+  /* in the drawer, always show full labels regardless of rail state */
+  .fleet-shell[data-rail="rail"] .fleet-sidemenu .group-label,
+  .fleet-shell[data-rail="rail"] .fleet-sidemenu .fleet-nav-item .label,
+  .fleet-shell[data-rail="rail"] .fleet-sidemenu .fleet-nav-item .count{display:revert}
+  .fleet-shell[data-rail="rail"] .fleet-sidemenu .fleet-nav-item{justify-content:flex-start}
+}
