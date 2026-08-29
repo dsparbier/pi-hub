@@ -10,3 +10,9 @@ services:
     ports:
       - "0.0.0.0:31106:80"
     restart: unless-stopped
+
+  pi-hub-agent:
+    # Live-only overlay — mirrors how pi-hub is pinned above. The base file
+    # already sets restart: unless-stopped; repeated here for the same
+    # structural-consistency reason.
+    restart: unless-stopped

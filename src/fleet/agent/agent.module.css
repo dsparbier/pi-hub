@@ -1,0 +1,248 @@
+/* Agent views — only what the fleet-ui primitives (fleet-card / fleet-tile /
+   fleet-pill / fleet-section / fleet-filter) don't already cover. All colours
+   come from fleet tokens so every theme mode works. */
+
+/* ── charts ─────────────────────────────────────────────────────────── */
+.chartBox { margin-top: 4px; }
+.chartSvg { width: 100%; height: 130px; display: block; }
+.chartEmpty {
+  color: var(--muted); font-size: 13px; padding: 18px 4px; text-align: center;
+  border: 1px dashed var(--line); border-radius: var(--radius-control);
+}
+.chartLegend {
+  display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px;
+  font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums;
+}
+.chartLegend i {
+  display: inline-block; width: 9px; height: 9px; border-radius: 2px;
+  margin-right: 6px; vertical-align: middle;
+}
+.chartLegend b { color: var(--ink); font-weight: 600; }
+
+.chartGrid {
+  display: grid; gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+.resNote { margin-top: 10px; font-size: 11px; color: var(--muted); font-family: "IBM Plex Mono", monospace; }
+
+.dotGrid { display: grid; gap: 3px; margin-top: 6px; }
+.dotGrid span { aspect-ratio: 1; border-radius: 2px; min-height: 8px; }
+
+.triplet { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 6px; }
+.tripLabel { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.tripValue { font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; margin-top: 2px; }
+
+/* ── gauges ─────────────────────────────────────────────────────────── */
+.gaugeRow {
+  display: grid; gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+.gauge {
+  display: flex; flex-direction: column; align-items: center;
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius-card); padding: 14px 10px;
+}
+.gaugeSvg { width: 130px; max-width: 60vw; height: auto; }
+.gaugeVal { fill: var(--ink); font-size: 22px; font-weight: 600; font-family: "IBM Plex Sans", sans-serif; }
+.gaugeSub { fill: var(--muted); font-size: 10px; }
+.gaugeLabel { margin-top: 6px; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+
+.miniBars { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-top: 12px; }
+.barGauge { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-control); padding: 10px 12px; }
+.barGaugeHead { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+.barGaugeHead span:last-child { color: var(--ink); font-variant-numeric: tabular-nums; }
+.barTrack { height: 6px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+.barFill { height: 100%; border-radius: 999px; transition: width .4s ease; }
+
+/* ── key/value list ────────────────────────────────────────────────── */
+.kv { display: grid; grid-template-columns: max-content 1fr; gap: 6px 18px; font-size: 13px; }
+.kv dt { color: var(--muted); }
+.kv dd { color: var(--ink); font-variant-numeric: tabular-nums; }
+
+/* ── range tabs (reuse fleet-filter look) ─────────────────────────── */
+.rangeTabs { display: flex; gap: 6px; }
+.rangeTabs button {
+  font: inherit; font-size: 12px; padding: 4px 10px; border-radius: var(--radius-control);
+  border: 1px solid var(--line); background: var(--surface); color: var(--muted);
+}
+.rangeTabs button[aria-pressed="true"] { background: var(--ink); color: var(--ground); border-color: var(--ink); }
+
+/* ── containers table ─────────────────────────────────────────────── */
+.tableWrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius-card); }
+.table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.table th {
+  text-align: left; padding: 10px 12px; font-size: 11px; text-transform: uppercase;
+  letter-spacing: .06em; color: var(--muted); border-bottom: 1px solid var(--line);
+  background: var(--surface-2); position: sticky; top: 0;
+}
+.table td { padding: 9px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.table tbody tr { cursor: pointer; }
+.table tbody tr:hover { background: var(--surface-2); }
+.table tbody tr[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); }
+.table tbody tr[aria-selected="true"] .muted,
+.table tbody tr[aria-selected="true"] .composeTag { color: inherit; opacity: .8; }
+.num { text-align: right; font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+.imageCell { max-width: 240px; overflow: hidden; text-overflow: ellipsis; }
+.composeTag {
+  margin-left: 8px; font-size: 10px; padding: 1px 6px; border-radius: 999px;
+  background: var(--surface-2); color: var(--muted);
+}
+.roNote { color: var(--warn); font-size: 13px; margin-left: 4px; }
+
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 999px; margin-right: 7px; background: var(--idle); }
+.dot.running { background: var(--ok); }
+.dot.exited, .dot.dead { background: var(--stop); }
+.dot.paused, .dot.created, .dot.restarting { background: var(--warn); }
+
+/* ── detail pane ──────────────────────────────────────────────────── */
+.detail { border: 1px solid var(--line); border-radius: var(--radius-card); overflow: hidden; background: var(--surface); }
+.detailHead {
+  display: flex; align-items: center; gap: 10px; padding: 12px 14px;
+  border-bottom: 1px solid var(--line); flex-wrap: wrap;
+}
+.detailHead .title { font-family: "IBM Plex Mono", monospace; font-weight: 600; }
+.detailImage { font-size: 12px; color: var(--muted); font-family: "IBM Plex Mono", monospace; }
+.iconBtn { border: 0; background: none; color: var(--muted); display: inline-flex; padding: 4px; border-radius: var(--radius-control); }
+.iconBtn:hover { color: var(--ink); background: var(--surface-2); }
+
+.tabRow { display: flex; gap: 4px; padding: 8px 12px; border-bottom: 1px solid var(--line); }
+.tabRow button {
+  font: inherit; font-size: 12px; display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 10px; border-radius: var(--radius-control); border: 1px solid transparent;
+  background: none; color: var(--muted);
+}
+.tabRow button[aria-pressed="true"] { background: var(--surface-2); color: var(--ink); border-color: var(--line); }
+.tabBody { padding: 14px; }
+
+.jsonBody {
+  margin: 0; max-height: 460px; overflow: auto; font-size: 12px; line-height: 1.5;
+  font-family: "IBM Plex Mono", monospace; color: var(--ink);
+  background: var(--ground); border: 1px solid var(--line); border-radius: var(--radius-control); padding: 12px;
+}
+
+/* ── log stream ───────────────────────────────────────────────────── */
+.logWrap { border: 1px solid var(--line); border-radius: var(--radius-control); overflow: hidden; }
+.logBar {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 8px 10px; background: var(--surface-2); border-bottom: 1px solid var(--line);
+  font-size: 12px;
+}
+.toggle {
+  font: inherit; font-size: 12px; display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 9px; border-radius: var(--radius-control); border: 1px solid var(--line);
+  background: var(--surface); color: var(--muted);
+}
+.toggle[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.selWrap { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
+.selWrap select {
+  font: inherit; font-size: 12px; padding: 3px 6px; border-radius: var(--radius-control);
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+}
+.logCount { margin-left: auto; color: var(--muted); font-variant-numeric: tabular-nums; }
+.logBody {
+  margin: 0; max-height: 420px; overflow: auto; padding: 10px 12px;
+  font-family: "IBM Plex Mono", monospace; font-size: 12px; line-height: 1.55;
+  color: var(--ink); background: var(--ground); white-space: pre-wrap; word-break: break-word;
+}
+.logTs { color: var(--muted); }
+.logErr { color: var(--stop); }
+
+/* ── live stats grid ─────────────────────────────────────────────── */
+.statGrid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); align-items: start; }
+.statCell { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-control); padding: 10px 12px; }
+.statLabel { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.statValue { font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; margin: 3px 0 6px; }
+
+/* ═══ Plan 2 — control / images / exec / audit / dialogs ═══════════════ */
+
+/* action buttons */
+.actionRow, .actionRow > * { display: inline-flex; }
+.actionRow { flex-wrap: wrap; gap: 6px; align-items: center; }
+.actBtn {
+  font: inherit; font-size: 12px; display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 10px; border-radius: var(--radius-control); border: 1px solid var(--line);
+  background: var(--surface); color: var(--ink);
+}
+.actBtn:disabled { opacity: .5; cursor: default; }
+.act_ok:hover:not(:disabled)   { border-color: var(--ok);   color: var(--ok); }
+.act_warn:hover:not(:disabled) { border-color: var(--warn); color: var(--warn); }
+.act_stop:hover:not(:disabled) { border-color: var(--stop); color: var(--stop); }
+.detailActions { padding: 12px 14px; border-bottom: 1px solid var(--line); }
+
+/* generic buttons */
+.btn {
+  font: inherit; font-size: 13px; padding: 6px 14px; border-radius: var(--radius-control);
+  border: 1px solid var(--accent); background: var(--accent); color: var(--accent-ink);
+}
+.btn:disabled { opacity: .5; cursor: default; }
+.btnGhost {
+  font: inherit; font-size: 12px; display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 11px; border-radius: var(--radius-control); border: 1px solid var(--line);
+  background: none; color: var(--muted);
+}
+.btnGhost:hover { color: var(--ink); }
+.btn_stop { background: var(--stop); border-color: var(--stop); color: #fff; }
+.btn_warn { background: var(--warn); border-color: var(--warn); color: #1a1205; }
+
+.textInput {
+  font: inherit; font-size: 13px; padding: 6px 10px; border-radius: var(--radius-control);
+  border: 1px solid var(--line); background: var(--ground); color: var(--ink); min-width: 220px;
+}
+.textInput:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+
+/* modal */
+.modalScrim {
+  position: fixed; inset: 0; background: rgba(0, 0, 0, .5);
+  display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px;
+}
+.modal {
+  width: min(520px, 100%); background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius-card); box-shadow: 0 20px 60px rgba(0, 0, 0, .4); overflow: hidden;
+}
+.modalHead {
+  display: flex; align-items: center; gap: 10px; padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.modalHead .title { font-family: "IBM Plex Mono", monospace; font-weight: 600; }
+.modalBody { padding: 16px; font-size: 14px; color: var(--ink); }
+.modalBody p { margin: 0 0 12px; color: var(--muted); line-height: 1.5; }
+.modalFoot {
+  display: flex; justify-content: flex-end; gap: 10px; padding: 12px 16px;
+  border-top: 1px solid var(--line); background: var(--surface-2);
+}
+.checkRow { display: flex; align-items: center; gap: 8px; margin: 6px 0; font-size: 13px; color: var(--ink); }
+.confirmHint { margin: 12px 0 6px !important; }
+
+/* task progress */
+.taskBox { margin-top: 12px; border: 1px solid var(--line); border-radius: var(--radius-control); overflow: hidden; }
+.taskHead {
+  display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+  background: var(--surface-2); border-bottom: 1px solid var(--line);
+}
+.taskLog {
+  margin: 0; max-height: 240px; overflow: auto; padding: 10px 12px;
+  font-family: "IBM Plex Mono", monospace; font-size: 12px; line-height: 1.5;
+  color: var(--ink); background: var(--ground); white-space: pre-wrap; word-break: break-word;
+}
+
+/* image panel */
+.dfRow { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+.dfStat {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-control);
+  padding: 8px 14px; min-width: 130px;
+}
+.pullForm { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+
+/* audit */
+.auditBar { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; font-size: 12px; }
+
+/* exec terminal */
+.execWrap { border: 1px solid var(--line); border-radius: var(--radius-control); overflow: hidden; }
+.execBar {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding: 8px 10px; background: var(--surface-2); border-bottom: 1px solid var(--line); font-size: 12px;
+}
+.execWarn { margin-left: auto; display: inline-flex; align-items: center; gap: 5px; color: var(--warn); }
+.execHost { height: 380px; background: #0c110f; padding: 6px 8px; }
+.execHost :global(.xterm) { height: 100%; }
