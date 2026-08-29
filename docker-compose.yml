@@ -14,6 +14,64 @@ services:
     # For dev with hot-reload, override with the dev service below
     # and run: docker compose -f docker-compose.yml -f docker-compose.dev.yml up
 
+  # pi-hub-agent — FastAPI sidecar: native host metrics + read-only container view.
+  # Replaces Beszel (Plan 1) and, later, Portainer (Plan 2). Publishes NO port; the
+  # only ingress is pi-hub's nginx `/agent/` location, so both services share this
+  # compose project's own default network (allowed — the fleet rule bars *cross-project*
+  # network joins, not same-project ones). See docs/AGENT.md.
+  #
+  # Deviation from "HTTP-over-published-port only": the two bind mounts below.
+  #   - /var/run/docker.sock  — read container list/inspect/stats/logs. `:ro` is
+  #     cosmetic (the full Engine API is still reachable); the admin API key is the
+  #     real write boundary (Plan 2). Non-root uid + cap_drop + read_only rootfs limit
+  #     what a compromised agent can do to itself.
+  #   - /:/host:ro            — psutil needs the host rootfs for disk usage,
+  #     /proc/net/dev (real NIC throughput) and /sys thermal. Read-only.
+  pi-hub-agent:
+    build: ./agent
+    container_name: pi-hub-agent
+    restart: unless-stopped
+    environment:
+      - AGENT_READ_KEY=${AGENT_READ_KEY:?set in .env}
+      - AGENT_ADMIN_KEY=${AGENT_ADMIN_KEY:?set in .env}
+      - HOST_ROOT=/host
+      - DISK_MOUNTS=/host
+      - SAMPLE_INTERVAL_HOST=15
+      - SAMPLE_INTERVAL_CONTAINERS=30
+      - RAW_RETENTION_HOURS=48
+      - ROLLUP_RETENTION_DAYS=90
+      - ENABLE_EXEC=true          # consumed in Plan 2
+      - MAX_EXEC_SESSIONS=3       # consumed in Plan 2
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # Host rootfs, read-only. Plain bind (no rslave) for portability — some
+      # hosts (rootless / WSL) don't expose `/` as a shared/slave mount, which
+      # makes a propagated bind fail to start. Add `:ro,rslave` on the Pi only
+      # if you need nested mounts (new disks) to appear live without a restart.
+      - /:/host:ro
+      - ./agent-data:/data
+    group_add:
+      - "${DOCKER_GID:?run: getent group docker}"
+    user: "10001:10001"
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    dns:
+      - 192.168.68.115
+      - 192.168.68.57
+      - 1.1.1.1
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=1
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://127.0.0.1:8080/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
   # Uncomment to run the Vite dev server directly in Docker during development
   # pi-hub-dev:
   #   image: node:20-alpine

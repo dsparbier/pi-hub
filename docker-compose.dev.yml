@@ -1,0 +1,10 @@
+services:
+  # Development overlay — run:
+  #   docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+  #
+  # Exposes the agent on a loopback-only host port so you can `curl` it directly
+  # during development. In production the agent publishes no port — its only
+  # ingress is pi-hub's nginx `/agent/` location.
+  pi-hub-agent:
+    ports:
+      - "127.0.0.1:31107:8080"

@@ -4,6 +4,13 @@ dist/
 .env.local
 *.log
 
+# pi-hub-agent (Python sidecar) — local venv, caches, and the bind-mounted SQLite store
+agent/.venv/
+agent/**/__pycache__/
+agent/.pytest_cache/
+agent-data/
+agent/agent-data/
+
 # Editor-specific (personal IDE settings, not project config)
 .vscode/
 *.code-workspace

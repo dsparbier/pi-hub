@@ -1,0 +1,7 @@
+# pi-hub-agent runtime deps — pinned. See docs/AGENT.md.
+# python:3.12-slim-bookworm (glibc) so psutil arm64 wheels install without a compiler.
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+aiodocker==0.24.0
+psutil==6.1.1
+anyio==4.8.0

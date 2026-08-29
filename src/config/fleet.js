@@ -15,6 +15,20 @@ let keyOverrides = {}
 try { keyOverrides = JSON.parse(localStorage.getItem('fleet.console.keys') || '{}') } catch {}
 const K = (id, def) => keyOverrides[id] || def
 
+/* pi-hub-agent — the FastAPI sidecar in this same compose project. It has no
+ * published port; the browser reaches it through the console's own nginx at
+ * `/agent/…` (single origin, no CORS). Two-tier key: `read` for metrics + the
+ * read-only container view (Plan 1), `admin` for container control (Plan 2).
+ * Override per-browser via localStorage['fleet.console.keys'] with keys
+ * "pi-hub-agent" (read) and "pi-hub-agent-admin" (admin). */
+export const AGENT = {
+  id: 'pi-hub-agent',
+  base: '/agent',
+  healthUrl: '/agent/health',
+  readKey:  K('pi-hub-agent', 'pi-hub-agent-read-key'),
+  adminKey: keyOverrides['pi-hub-agent-admin'] || 'pi-hub-agent-admin-key',
+}
+
 export const FLEET_GROUPS = [
   { id: 'backends',       label: 'Fleet backends' },
   { id: 'frontends',      label: 'Frontends' },
@@ -84,7 +98,12 @@ const services = [
   { id: 'adguard', label: 'AdGuard Home', icon: 'contrast', group: 'infrastructure', blurb: 'DNS ad/tracker blocking + LAN DNS', pingUrl: 'http://adguard.pi-hub.local/', open: 'http://adguard.pi-hub.local' },
   { id: 'npm',     label: 'NGINX Proxy Manager', icon: 'panel-left', group: 'infrastructure', blurb: 'Reverse proxy for *.pi-hub.local', pingUrl: 'http://npm.pi-hub.local/', open: 'http://npm.pi-hub.local' },
   { id: 'portainer', label: 'Portainer', icon: 'settings', group: 'infrastructure', blurb: 'Container management', pingUrl: 'http://portainer.pi-hub.local/', open: 'http://portainer.pi-hub.local' },
-  { id: 'beszel',  label: 'Beszel', icon: 'activity', group: 'infrastructure', blurb: 'Host & container metrics', pingUrl: 'http://beszel.pi-hub.local/', open: 'http://beszel.pi-hub.local' },
+  // Beszel stays listed during the ~1–2 week parallel run. Drop this entry at
+  // cutover once the parity checklist passes (docs/PLAN-monitoring-consolidation.md §8).
+  { id: 'beszel',  label: 'Beszel', icon: 'activity', group: 'infrastructure', blurb: 'Host & container metrics (being retired → pi-hub-agent)', pingUrl: 'http://beszel.pi-hub.local/', open: 'http://beszel.pi-hub.local' },
+  // Native metrics + read-only container sidecar in this compose project. Same-origin
+  // JSON /health — useFleetHealth polls it unchanged.
+  { id: 'pi-hub-agent', label: 'Pi-Hub Agent', icon: 'box', group: 'infrastructure', blurb: 'Native metrics + container mgmt sidecar', healthUrl: '/agent/health' },
 
   // ── tools & automation ──────────────────────────────────────────────
   { id: 'ollama',    label: 'Ollama', icon: 'activity', group: 'tools', blurb: 'Local LLM runtime', healthUrl: `${HOST}:11434/`, open: `${HOST}:11434` },

@@ -1,0 +1,5 @@
+-r requirements.txt
+# test-only deps — not shipped in the image
+pytest==8.3.4
+pytest-asyncio==0.25.2
+httpx==0.28.1
