@@ -1,0 +1,133 @@
+/* ============================================================================
+   FLEET TOKENS — tokens.css
+   Fleet UI Standard (~/projects/_fleet/FLEET-UI-STANDARD.md §2 + §3).
+   Import this BEFORE app-shell.css and before any app CSS.
+
+   Structure: bare :root is the full light palette; `system` mode (no data-theme)
+   picks up dark (and, optionally, high-contrast) via @media; each of the four
+   named themes sets its own :root[data-theme="…"] block so an explicit choice
+   always beats the OS; data-density is an independent axis over spacing only.
+   Every token has a value on bare :root — nothing is defined only in a media or
+   attribute block.
+   ============================================================================ */
+
+:root{
+  --fleet-ui-version:"1.0.0";
+
+  /* surfaces */
+  --ground:#f4f7f6; --surface:#ffffff; --surface-2:#eaf0ef;
+  --ink:#15201e; --muted:#586662; --line:#dde5e3;
+  /* identity + semantic */
+  --accent:#0d6d75; --accent-ink:#ffffff;
+  --ok:#1c8a4b; --warn:#a9741a; --stop:#b83a2b; --idle:#93a09b;
+  --ok-bg:#e3f3e9; --warn-bg:#f6edda; --stop-bg:#f6e2de; --idle-bg:#eceff0;
+  /* elevation + geometry */
+  --shadow:0 1px 2px rgba(20,40,38,.06),0 4px 16px rgba(20,40,38,.05);
+  --radius-card:12px; --radius-tile:10px; --radius-control:8px; --radius-pill:999px;
+  /* shell metrics */
+  --titlebar-h:52px; --sidemenu-w:232px; --sidemenu-rail:56px; --content-max:1140px;
+  /* border weight — high-contrast raises this; primitives read var(--line-weight,1px) */
+  --line-weight:1px;
+  /* density (comfortable) — overridden by [data-density="compact"] below */
+  --pad-card:16px; --pad-tile:14px; --row-h:38px; --gap-grid:12px;
+}
+
+/* system mode only (no explicit data-theme) follows the OS */
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme]){
+    --ground:#0c110f; --surface:#141a18; --surface-2:#1c2422;
+    --ink:#e3eae7; --muted:#8b978f; --line:#26302d;
+    --accent:#3fc2cc; --accent-ink:#062421;
+    --ok:#48c17e; --warn:#dcab4d; --stop:#e2735f; --idle:#66736e;
+    --ok-bg:#12271c; --warn-bg:#2a2415; --stop-bg:#2c1c18; --idle-bg:#1b2321;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  }
+}
+/* system mode + OS "increase contrast" preference */
+@media (prefers-contrast:more){
+  :root:not([data-theme]){
+    --ink:#000000; --muted:#333333; --line:#000000; --shadow:none;
+  }
+}
+
+/* explicit light — same as bare :root, restated so the toggle wins both ways */
+:root[data-theme="light"]{
+  --ground:#f4f7f6; --surface:#ffffff; --surface-2:#eaf0ef;
+  --ink:#15201e; --muted:#586662; --line:#dde5e3;
+  --accent:#0d6d75; --accent-ink:#ffffff;
+  --ok:#1c8a4b; --warn:#a9741a; --stop:#b83a2b; --idle:#93a09b;
+  --ok-bg:#e3f3e9; --warn-bg:#f6edda; --stop-bg:#f6e2de; --idle-bg:#eceff0;
+  --shadow:0 1px 2px rgba(20,40,38,.06),0 4px 16px rgba(20,40,38,.05);
+  --line-weight:1px;
+}
+
+:root[data-theme="dark"]{
+  --ground:#0c110f; --surface:#141a18; --surface-2:#1c2422;
+  --ink:#e3eae7; --muted:#8b978f; --line:#26302d;
+  --accent:#3fc2cc; --accent-ink:#062421;
+  --ok:#48c17e; --warn:#dcab4d; --stop:#e2735f; --idle:#66736e;
+  --ok-bg:#12271c; --warn-bg:#2a2415; --stop-bg:#2c1c18; --idle-bg:#1b2321;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.35);
+  --line-weight:1px;
+}
+
+/* ambient — warm, low-blue-light, reduced contrast ("evening / lamplight").
+   Teal accent kept for identity but softened; semantic colors nudged warm so
+   they stay legible on the warm ground. Shadow is nearly flat. */
+:root[data-theme="ambient"]{
+  --ground:#151109; --surface:#1e1810; --surface-2:#28211a;
+  --ink:#ece0cb; --muted:#a2947c; --line:#332a1e;
+  --accent:#5fb2b0; --accent-ink:#0b1a19;
+  --ok:#7bbf7a; --warn:#d9a557; --stop:#d97a5f; --idle:#8a7d67;
+  --ok-bg:#20291b; --warn-bg:#2f2716; --stop-bg:#2f2018; --idle-bg:#241d13;
+  --shadow:0 1px 2px rgba(0,0,0,.25),0 4px 14px rgba(0,0,0,.28);
+  --line-weight:1px;
+}
+
+/* high-contrast — maximum legibility: pure black/white ground, heavy lines,
+   bright accent, no soft shadow. Targets WCAG AAA body contrast (>=7:1). */
+:root[data-theme="high-contrast"]{
+  --ground:#ffffff; --surface:#ffffff; --surface-2:#f0f0f0;
+  --ink:#000000; --muted:#333333; --line:#000000;
+  --accent:#006d77; --accent-ink:#ffffff;
+  --ok:#0a6b34; --warn:#7a4a00; --stop:#9a1b0e; --idle:#3a3a3a;
+  --ok-bg:#d6f0e0; --warn-bg:#f3e6cc; --stop-bg:#f6dcd8; --idle-bg:#e6e6e6;
+  --shadow:none;
+  --line-weight:2px;
+}
+
+/* density — orthogonal to theme. Set data-density="compact" on <html>. */
+:root[data-density="compact"]{
+  --pad-card:10px; --pad-tile:9px; --row-h:30px; --gap-grid:8px;
+}
+
+/* ============================================================================
+   TYPOGRAPHY (§3)
+   The @import must be the first at-rule; if your bundler complains, move the
+   <link> into the document <head> instead (see app-shell.html).
+   ============================================================================ */
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;450;500;600;700&display=swap");
+
+body{
+  font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:14px; line-height:1.55; font-weight:400;
+  background:var(--ground); color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+h1,h2,h3{text-wrap:balance; line-height:1.2}
+
+/* Reference type scale — apply via these classes or copy the values.
+   Do not deviate from the sizes/weights/spacing. */
+.fleet-h1{font-size:clamp(26px,4.4vw,38px); font-weight:600; letter-spacing:-.02em}
+.fleet-eyebrow{font-family:"IBM Plex Mono",monospace; font-size:11.5px; font-weight:500;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--accent)}
+.fleet-lede{font-size:15px; font-weight:400; color:var(--muted); max-width:64ch}
+.fleet-h2{font-family:"IBM Plex Mono",monospace; font-size:12.5px; font-weight:600;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--ink)}
+.fleet-panel-title{font-family:"IBM Plex Mono",monospace; font-size:16px; font-weight:600; letter-spacing:-.01em}
+.fleet-label{font-family:"IBM Plex Mono",monospace; font-size:10.5px; font-weight:600;
+  letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.fleet-meta{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--muted)}
+.fleet-meta b{color:var(--ink); font-weight:600}

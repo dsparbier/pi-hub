@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fleet App Shell — reference</title>
+
+  <!-- 1. pre-paint theme + density (smallest form; before the stylesheet) -->
+  <script src="./theme-inline.min.js"></script>
+
+  <!-- 2. fonts (kept here rather than @import so there's no request waterfall) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;450;500;600;700&display=swap">
+
+  <!-- 3. tokens THEN shell THEN (in a real app) your own stylesheet -->
+  <link rel="stylesheet" href="./tokens.css">
+  <link rel="stylesheet" href="./app-shell.css">
+</head>
+<body>
+
+<div class="fleet-shell" id="shell" data-rail="open">
+
+  <!-- ─────────────── Title-Bar (§5) ─────────────── -->
+  <header class="fleet-titlebar">
+    <button class="fleet-iconbtn" id="railBtn" aria-label="Toggle navigation"></button>
+    <span class="mark" aria-hidden="true"></span>
+    <span class="app-name">app-name</span>
+    <span class="fleet-pill idle" id="ctxPill">local</span>
+    <span class="spacer"></span>
+    <button class="fleet-iconbtn" aria-label="Search"></button>
+    <span class="status-dot" id="statusDot" title="/health"></span>
+  </header>
+
+  <!-- ─────────────── Side-Menu (§6) ─────────────── -->
+  <nav class="fleet-sidemenu" aria-label="Primary">
+    <div class="group-label">Overview</div>
+    <a class="fleet-nav-item" href="#" aria-current="page">
+      <span class="icon" data-icon="activity"></span><span class="label">Dashboard</span>
+    </a>
+    <a class="fleet-nav-item" href="#">
+      <span class="icon" data-icon="search"></span><span class="label">Browse</span><span class="count">128</span>
+    </a>
+
+    <div class="group-label">Manage</div>
+    <a class="fleet-nav-item" href="#">
+      <span class="icon" data-icon="plus"></span><span class="label">New item</span>
+    </a>
+    <a class="fleet-nav-item" href="#">
+      <span class="icon" data-icon="settings"></span><span class="label">Configuration</span>
+    </a>
+
+    <div class="footer">
+      <div class="fleet-theme-switch" id="themeSwitch" role="group" aria-label="Theme"></div>
+      <label class="fleet-density-toggle">
+        <input type="checkbox" id="densityToggle"> Compact
+      </label>
+      <button class="fleet-nav-item" id="railBtn2">
+        <span class="icon" data-icon="panel-left"></span><span class="label">Collapse</span>
+      </button>
+    </div>
+  </nav>
+  <div class="fleet-scrim" id="scrim"></div>
+
+  <!-- ─────────────── Content region (§7) ─────────────── -->
+  <main class="fleet-content">
+    <div class="wrap">
+      <header class="fleet-page-header">
+        <div class="eyebrow">reference</div>
+        <h1>Fleet App Shell</h1>
+        <p class="lede">Every hub frontend renders inside this shell — a sticky Title-Bar,
+          a collapsible Side-Menu, and a centred content region on <code>--ground</code>.
+          Copy this file, swap the nav + content, keep the classes.</p>
+        <div class="meta">
+          <span>fleet_ui <b>1.0.0</b></span><span>theme <b id="metaTheme">system</b></span>
+          <span>density <b id="metaDensity">comfortable</b></span>
+        </div>
+      </header>
+
+      <section class="fleet-section">
+        <div class="fleet-sec-head"><h2>Stat tiles</h2><span class="rule"></span><span class="count">.fleet-tile</span></div>
+        <div class="fleet-tiles">
+          <div class="fleet-tile"><div class="k">Documents</div><div class="v">1,284</div><div class="sub">+12 this week</div></div>
+          <div class="fleet-tile"><div class="k">Size</div><div class="v">4.2<small> GB</small></div><div class="sub">across 3 stores</div></div>
+          <div class="fleet-tile"><div class="k">Open</div><div class="v">7</div><div class="sub">2 need attention</div></div>
+        </div>
+      </section>
+
+      <section class="fleet-section">
+        <div class="fleet-sec-head"><h2>Cards</h2><span class="rule"></span></div>
+        <div class="fleet-card ok">
+          <div class="title">example.db</div>
+          <dl class="facts">
+            <dt>rows</dt><dd>18,402</dd>
+            <dt>target</dt><dd>local</dd>
+            <dt>status</dt><dd>healthy</dd>
+          </dl>
+          <div>Accent-edged card. The left border encodes state
+            (<span class="fleet-pill ok">ok</span> <span class="fleet-pill warn">warn</span>
+            <span class="fleet-pill stop">stop</span> <span class="fleet-pill idle">idle</span>).</div>
+        </div>
+      </section>
+
+      <section class="fleet-section">
+        <div class="fleet-sec-head"><h2>Filter + table</h2><span class="rule"></span></div>
+        <div class="fleet-filter" style="margin-bottom:12px">
+          <button aria-pressed="true">All</button>
+          <button aria-pressed="false">Active</button>
+          <button aria-pressed="false">Archived</button>
+        </div>
+        <div class="fleet-scroll">
+          <table>
+            <thead><tr><th>Name</th><th>Type</th><th class="num">Count</th></tr></thead>
+            <tbody>
+              <tr><td>alpha</td><td>note</td><td class="num">42</td></tr>
+              <tr><td>beta</td><td>file</td><td class="num">1,003</td></tr>
+              <tr><td>gamma</td><td>note</td><td class="num">7</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="fleet-section">
+        <div class="fleet-sec-head"><h2>Verify callout</h2><span class="rule"></span></div>
+        <div class="fleet-verify">
+          <h3>All five theme modes</h3>
+          <ul>
+            <li>system — follows the OS</li>
+            <li>light / dark / ambient / high-contrast — explicit</li>
+            <li class="x">no per-app palette or font stack</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script type="module">
+  import { initTheme, getTheme, setTheme, THEMES, getDensity, setDensity,
+           toggleRail, bindShell } from "./theme.js";
+  import { svg, THEME_ICON } from "./icons/index.js";
+
+  initTheme();
+
+  // paint nav-item + footer icons
+  document.querySelectorAll("[data-icon]").forEach(el => { el.innerHTML = svg(el.dataset.icon, 18); });
+  document.getElementById("railBtn").innerHTML  = svg("menu", 18);
+  document.querySelector('[aria-label="Search"]').innerHTML = svg("search", 18);
+
+  // build the 5-way theme switch
+  const sw = document.getElementById("themeSwitch");
+  const metaTheme = document.getElementById("metaTheme");
+  const metaDensity = document.getElementById("metaDensity");
+  function renderSwitch() {
+    const cur = getTheme();
+    sw.innerHTML = THEMES.map(t =>
+      `<button data-theme-btn="${t}" aria-pressed="${t === cur}" title="${t}">${svg(THEME_ICON[t], 14)}</button>`
+    ).join("");
+    metaTheme.textContent = cur;
+  }
+  renderSwitch();
+  sw.addEventListener("click", e => {
+    const b = e.target.closest("[data-theme-btn]");
+    if (!b) return;
+    setTheme(b.dataset.themeBtn);
+    renderSwitch();
+  });
+
+  // density
+  const dt = document.getElementById("densityToggle");
+  dt.checked = getDensity() === "compact";
+  metaDensity.textContent = getDensity();
+  dt.addEventListener("change", () => { setDensity(dt.checked ? "compact" : "comfortable"); metaDensity.textContent = getDensity(); });
+
+  // rail collapse (both the titlebar hamburger on wide, and the footer button)
+  const shell = document.getElementById("shell");
+  const shellApi = bindShell(shell);
+  function railOrDrawer() {
+    if (window.matchMedia("(max-width:900px)").matches) shellApi.toggleDrawer();
+    else toggleRail(shell);
+  }
+  document.getElementById("railBtn").addEventListener("click", railOrDrawer);
+  document.getElementById("railBtn2").addEventListener("click", railOrDrawer);
+  document.getElementById("scrim").addEventListener("click", shellApi.closeDrawer);
+</script>
+</body>
+</html>
