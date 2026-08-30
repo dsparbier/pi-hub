@@ -1,12 +1,44 @@
 # Pi-Hub Project Tracker
 
 ## Current Version
-1.7.0
+1.8.0
 
 ## Overview
 Pi-Hub is a self-hosted front-end portal for a Raspberry Pi device (React 18 + Vite 5, CSS Modules, no UI library), served via a Docker multi-stage build (Nginx). As of 1.6.0 the compose project also runs a small FastAPI sidecar, `pi-hub-agent` (`agent/`), for native host metrics + a read-only container view — see [AGENT.md](./AGENT.md). See [UI_MANIFEST.md](./UI_MANIFEST.md) for the full design spec.
 
 ## Session Log
+
+### 2026-08-29 (4) — `pi-hub-agent` metrics storage migrated to SQL-Hub
+Closes the fleet-wide "default to SQL-Hub over a local/embedded DB" gap for this repo's one
+backend (`~/projects/CLAUDE.md` "Application Fleet Architecture"; flagged as outstanding in
+the 2026-08-29 (2)/(3) entries below, since Plan 1/2 had shipped with local SQLite).
+- **Backend** (`agent/`): new `agent/sql_hub_client.py` — minimal async REST client for
+  SQL-Hub's `/query/read` + `/query/write` (retries with backoff, idempotent
+  `/databases/create` on connect). `agent/db.py` gained `SqlHubDatabase` (same public
+  surface as the existing `Database`: `execute`/`query`/`query_one`/`scalar`/`get_meta`/
+  `set_meta`/`ok`/`size_bytes`/`wal_checkpoint`/`incremental_vacuum`) and `open_database(cfg)`,
+  which picks SQL-Hub whenever `SQL_HUB_URL` is set. `config.py` gained
+  `sql_hub_url`/`sql_hub_api_key`/`sql_hub_db_name`; `app.py`/`deps.py` updated to call
+  `open_database()` and type against `Database | SqlHubDatabase`. Zero changes needed in
+  `collector.py`/`routes_*.py`/`tasks.py` — they only ever used `db.py`'s public surface.
+  The local-sqlite `Database` class is unchanged and now serves as the test-only backend
+  (`Database(":memory:")`, `tests/conftest.py`) — same pattern as fin-hub's
+  `FLEET_TEST_SQLITE`. `wal_checkpoint()`/`incremental_vacuum()` are no-ops on the SQL-Hub
+  backend (SQL-Hub owns that connection's lifecycle); `size_bytes()` is best-effort via
+  `PRAGMA page_count`/`page_size` through `/query/read`, falling back to `0`.
+- **Deployment**: `docker-compose.yml` sets `SQL_HUB_URL`/`SQL_HUB_API_KEY`/`SQL_HUB_DB_NAME`
+  and drops the `./agent-data:/data` bind mount; gained
+  `extra_hosts: host.docker.internal:host-gateway` (required on this engine — confirmed
+  `host.docker.internal` does not resolve here without it). `.env.example` documents the
+  three new keys (API key should be a dedicated one via SQL-Hub's
+  `POST /admin/api-keys/create`, not its master key).
+- **Docs**: `docs/AGENT.md` gained a "Data storage" section; its Deployment section's
+  `agent-data/` chown step is replaced with the SQL-Hub key/env setup.
+- **Verified**: all 43 agent tests pass unchanged; live end-to-end against a running
+  SQL-Hub instance — rebuilt, healthy, real `host_samples`/`container_samples` rows
+  confirmed landing in SQL-Hub via direct query.
+- Tracked in DEV-Hub as feature id 205 (`pi-hub-agent metrics storage migrated to SQL-Hub`,
+  status `done`).
 
 ### 2026-08-29 (3) — Plan 2: native container management, retire Portainer (`docs/PLAN-container-management.md`)
 - **Backend** (`agent/`): `docker_client.py` extended with control / image / exec calls

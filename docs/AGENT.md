@@ -16,7 +16,7 @@ Source: `agent/`. Served to the browser only through the console's nginx at `/ag
 |---|---|
 | Host metrics | `psutil` over a read-only host mount — CPU, per-core, load, mem, swap, disk usage + IO, network throughput (parsed from `/host/proc/net/dev`), CPU temp, uptime. Sampled every 15 s. |
 | Container metrics | Docker Engine API (`/containers/{id}/stats`) — CPU %, mem, net, blkio, PIDs per running container, every 30 s. |
-| History | Local **bind-mounted SQLite** at `/data/metrics.db`. 48 h of raw samples + 90 d of hourly rollups (AVG + MAX). Retention/rollup task every 30 min. Steady-state size ≈ 30–45 MB. |
+| History | **SQL-Hub** (`pi-hub-agent.db`, fleet-wide default — see `~/projects/CLAUDE.md` and "Data storage" below), not a local file. 48 h of raw samples + 90 d of hourly rollups (AVG + MAX). Retention/rollup task every 30 min. |
 | Logs / live stats | Per-container WebSocket log follow and stats stream. |
 | Auth | Two static keys via `X-API-Key`: **read** (metrics + read-only containers) and **admin** (container control — Plan 2). Constant-time compare. |
 
@@ -45,6 +45,31 @@ that. Keep the admin key strong, random, and distinct from the read key.
 
 ---
 
+## Data storage
+
+Metrics live in **SQL-Hub**, not a local file — the fleet-wide default (every hub
+defaults SQL sources to SQL-Hub over a local/embedded DB, `~/projects/CLAUDE.md`
+"Application Fleet Architecture"), applied here 2026-08-29. `agent/db.py`'s
+`SqlHubDatabase` talks to SQL-Hub's `/query/read` + `/query/write` over HTTP
+(`agent/sql_hub_client.py`) using the exact same schema (`host_samples`,
+`container_samples`, `rollup_host_1h`, `rollup_container_1h`, `audit_log`, `meta`) the
+original local-sqlite implementation used — every call site above `db.py` (collector,
+routes, tasks) is unchanged.
+
+The local-sqlite path (`agent/db.py`'s plain `Database` class) still exists and still
+backs the test suite (`Database(":memory:")`, see `tests/conftest.py`) — mirrors the
+`FLEET_TEST_SQLITE`-style test-only escape hatch already used elsewhere in the fleet
+(e.g. fin-hub). `db.py`'s `open_database(cfg)` picks SQL-Hub whenever `SQL_HUB_URL` is
+set (i.e. always, in `docker-compose.yml`); tests never set it, so they're unaffected.
+
+`wal_checkpoint()`/`incremental_vacuum()` are no-ops against the SQL-Hub backend — that's
+SQL-Hub's own connection to manage, not this agent's. `size_bytes()` is best-effort
+(`PRAGMA page_count`/`page_size` via `/query/read`; SQL-Hub's `BUG-FIX-PLAN.md` tracks
+tightening read-only enforcement there, which could someday break this pass-through —
+falls back to `0`, not a crash, if it ever does).
+
+---
+
 ## Deployment
 
 `docker-compose.yml` defines the `pi-hub-agent` service. Before the first `up`:
@@ -54,18 +79,20 @@ that. Keep the admin key strong, random, and distinct from the read key.
    AGENT_READ_KEY=<strong random>
    AGENT_ADMIN_KEY=<different strong random>
    DOCKER_GID=<getent group docker | cut -d: -f3   on THIS host>
+   SQL_HUB_URL=http://host.docker.internal:1234
+   SQL_HUB_API_KEY=<dedicated key — POST /admin/api-keys/create on SQL-Hub, not its master key>
+   SQL_HUB_DB_NAME=pi-hub-agent.db
    ```
    The Pi and the WSL dev box have different `docker` gids — set each host's own.
+   `extra_hosts: host.docker.internal:host-gateway` (already in `docker-compose.yml`) is
+   required on this engine — confirmed 2026-08-29 that `host.docker.internal` does not
+   resolve here without it (this isn't Docker Desktop's DNS; a plain container without
+   `--add-host` fails to resolve it at all).
 
-2. **`agent-data/`** — the SQLite bind-mount target (gitignored). Compose would auto-create
-   it on `up`, but as root — and the container runs as `uid 10001`, so create it yourself
-   with the right owner first:
-   ```
-   mkdir -p agent-data
-   sudo chown 10001:10001 agent-data     # or: chmod 777 agent-data
-   ```
-   Required on every deploy host. Symptom if skipped: the agent crash-loops with
-   `sqlite3.OperationalError: unable to open database file`.
+2. **`agent-data/`** — retired. Was the old local-sqlite bind-mount target; no longer
+   mounted by `docker-compose.yml` now that storage is SQL-Hub. Left in place on hosts
+   that had it (may still hold pre-migration `metrics.db*` files) but nothing reads or
+   writes it anymore — safe to delete whenever convenient.
 
 3. **Browser keys** — on the admin box, set
    `localStorage['fleet.console.keys']` to include

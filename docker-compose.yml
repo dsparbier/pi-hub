@@ -27,6 +27,11 @@ services:
   #     what a compromised agent can do to itself.
   #   - /:/host:ro            — psutil needs the host rootfs for disk usage,
   #     /proc/net/dev (real NIC throughput) and /sys thermal. Read-only.
+  #
+  # Metrics storage is SQL-Hub (fleet-wide default, ~/projects/CLAUDE.md), not a local
+  # sqlite file — see docs/AGENT.md §"Data storage". `extra_hosts` is required (not
+  # optional) on this host: this engine doesn't resolve host.docker.internal without
+  # it, confirmed 2026-08-29 (plain alpine container, no add-host: DNS lookup failed).
   pi-hub-agent:
     build: ./agent
     container_name: pi-hub-agent
@@ -42,6 +47,9 @@ services:
       - ROLLUP_RETENTION_DAYS=90
       - ENABLE_EXEC=true          # consumed in Plan 2
       - MAX_EXEC_SESSIONS=3       # consumed in Plan 2
+      - SQL_HUB_URL=${SQL_HUB_URL:-http://host.docker.internal:1234}
+      - SQL_HUB_API_KEY=${SQL_HUB_API_KEY:?set in .env}
+      - SQL_HUB_DB_NAME=${SQL_HUB_DB_NAME:-pi-hub-agent.db}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       # Host rootfs, read-only. Plain bind (no rslave) for portability — some
@@ -49,7 +57,8 @@ services:
       # makes a propagated bind fail to start. Add `:ro,rslave` on the Pi only
       # if you need nested mounts (new disks) to appear live without a restart.
       - /:/host:ro
-      - ./agent-data:/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     group_add:
       - "${DOCKER_GID:?run: getent group docker}"
     user: "10001:10001"

@@ -22,12 +22,41 @@ stable architecture/conventions primer see `.claude/CLAUDE.md` (imports this fil
   reachable only via the console nginx `location /agent/`. Two bind mounts
   (`/var/run/docker.sock:ro`, `/:/host:ro`) — documented in `docs/AGENT.md` and compose
   comments; the fleet "no cross-project Docker networks" rule is **not** violated (same
-  project, no network join). History in a bind-mounted SQLite file
-  (`agent-data/metrics.db`), 48 h raw + 90 d hourly rollups.
-  - The DEV-Hub auto-logging skip (CLAUDE.md "Ecosystem context") and the fleet-wide
-    SQL-Hub-default rule were both predicated on "pi-hub has no backend". That premise is
-    now partly false — revisit both **for the agent specifically** if it ever needs
-    logging/persistence beyond its metrics SQLite.
+  project, no network join). History was originally a bind-mounted SQLite file
+  (`agent-data/metrics.db`), 48 h raw + 90 d hourly rollups — **migrated to SQL-Hub
+  2026-08-29** (see below), so that detail is now historical.
+  - The DEV-Hub auto-logging skip (CLAUDE.md "Ecosystem context") was predicated on
+    "pi-hub has no backend". That premise is now false (the agent is a real FastAPI
+    backend) — still not revisited; `.claude/CLAUDE.md`'s top-of-file "pure static
+    frontend... no backend process" description is now stale and should be corrected
+    next time that file is touched, not just here.
+  - The fleet-wide SQL-Hub-default rule half of this note is **resolved** — see the
+    2026-08-29 SQL-Hub migration entry below.
+- **2026-08-29 — `pi-hub-agent` metrics storage migrated from local SQLite to SQL-Hub**
+  (closes the fleet "default to SQL-Hub over a local/embedded DB" gap the entry above had
+  flagged). `agent/db.py` gained `SqlHubDatabase` (talks to SQL-Hub's `/query/read` +
+  `/query/write` via the new `agent/sql_hub_client.py`) and `open_database(cfg)`, which
+  picks it whenever `SQL_HUB_URL` is set — which `docker-compose.yml` now always sets.
+  Same schema, same table names, on `pi-hub-agent.db`. Zero changes needed to
+  `collector.py`/`routes_*.py`/`tasks.py` — they only ever used `db.py`'s public
+  `execute`/`query`/`get_meta`/etc. surface, which both backends implement identically.
+  The plain local-sqlite `Database` class is **not removed** — it's now the test-only
+  backend (`Database(":memory:")`, unchanged in `tests/conftest.py`; all 43 tests still
+  pass untouched), the same pattern fin-hub calls `FLEET_TEST_SQLITE`.
+  `wal_checkpoint()`/`incremental_vacuum()` are no-ops on the SQL-Hub backend (SQL-Hub
+  owns that connection's lifecycle, not this agent); `size_bytes()` is best-effort via
+  `PRAGMA page_count`/`page_size` through `/query/read`, falling back to `0` rather than
+  erroring if SQL-Hub ever tightens its (currently unenforced, per its own
+  `BUG-FIX-PLAN.md`) read-only validation. Required `extra_hosts:
+  host.docker.internal:host-gateway` in `docker-compose.yml` — confirmed live on this WSL
+  host that `host.docker.internal` does **not** resolve without it (not Docker Desktop's
+  DNS). New `.env` keys `SQL_HUB_URL`/`SQL_HUB_API_KEY`/`SQL_HUB_DB_NAME`; the API key is
+  a dedicated one created via SQL-Hub's `POST /admin/api-keys/create` (not its master
+  key). `agent-data/` is retired (no longer mounted) but left in place — it still holds
+  ~30 min of pre-migration `metrics.db*` from this agent's brief local-sqlite run; nothing
+  reads it anymore, safe to delete whenever convenient. Verified live end-to-end: rebuilt,
+  healthy, real `host_samples`/`container_samples` rows confirmed landing in SQL-Hub via
+  direct query. Full detail: `docs/AGENT.md` §"Data storage".
 - **nginx `/agent/` proxy** uses `set $agent_upstream …;` **before** `rewrite … break;`
   (the `break` flag halts later rewrite-phase directives, so a `set` after it silently
   yields an uninitialized variable → 500 "invalid URL prefix"). Variable upstream +
@@ -56,10 +85,12 @@ stable architecture/conventions primer see `.claude/CLAUDE.md` (imports this fil
   placeholder) in `/opt/docker/pi-hub/.env` (Pi) and the dev `.env`. Add both to the
   admin browser's `localStorage['fleet.console.keys']` as keys `pi-hub-agent` (read) and
   `pi-hub-agent-admin` (admin).
-- `mkdir -p agent-data && sudo chown 10001:10001 agent-data` (or `chmod 777`) on every
-  deploy host before first `up` — git does not carry the directory's write permission and
-  the container runs as uid 10001. Symptom if skipped: agent crash-loops with
-  `sqlite3.OperationalError: unable to open database file`.
+- ~~`mkdir -p agent-data && sudo chown 10001:10001 agent-data`~~ — **obsolete as of the
+  2026-08-29 SQL-Hub migration** (above); `agent-data/` is no longer mounted, nothing
+  needs its permissions fixed on a fresh deploy host anymore. What every deploy host
+  *does* still need: a SQL-Hub API key for the agent (`POST /admin/api-keys/create` on
+  the target SQL-Hub instance) and `SQL_HUB_URL`/`SQL_HUB_API_KEY`/`SQL_HUB_DB_NAME` in
+  that host's `.env` — see `docs/AGENT.md` §"Deployment".
 - NPM (`npm.pi-hub.local`): after the Beszel parity checklist passes, remove the
   `beszel.pi-hub.local` proxy host. Add **none** for the agent.
 - `docker compose down` in `/opt/docker/beszel` (hub + `beszel-agent`, host port 45876);

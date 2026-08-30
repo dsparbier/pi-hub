@@ -5,3 +5,6 @@ uvicorn[standard]==0.34.0
 aiodocker==0.24.0
 psutil==6.1.1
 anyio==4.8.0
+# Was already installed transitively via aiodocker; pinned explicitly now that
+# sql_hub_client.py depends on it directly (SQL-Hub metrics-store client).
+aiohttp==3.14.3

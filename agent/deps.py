@@ -4,11 +4,11 @@ from __future__ import annotations
 from fastapi import Request, WebSocket
 
 from .collector import Collector
-from .db import Database
+from .db import Database, SqlHubDatabase
 from .docker_client import DockerClient
 
 
-def get_db(request: Request) -> Database:
+def get_db(request: Request) -> "Database | SqlHubDatabase":
     return request.app.state.db
 
 
@@ -25,7 +25,7 @@ def get_tasks(request: Request):
 
 
 # WebSocket variants (WebSocket exposes .app)
-def ws_db(ws: WebSocket) -> Database:
+def ws_db(ws: WebSocket) -> "Database | SqlHubDatabase":
     return ws.app.state.db
 
 

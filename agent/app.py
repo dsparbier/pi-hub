@@ -19,7 +19,7 @@ from fastapi import FastAPI
 from . import __version__
 from .collector import Collector
 from .config import cfg
-from .db import Database
+from .db import open_database
 from .docker_client import DockerClient
 from .routes_containers_ctl import router as containers_ctl_router
 from .routes_containers_ro import router as containers_router
@@ -44,7 +44,7 @@ async def lifespan(app: FastAPI):
     if cfg.read_key == cfg.admin_key:
         raise RuntimeError("AGENT_READ_KEY and AGENT_ADMIN_KEY must differ")
 
-    db = Database(cfg.db_path)
+    db = open_database(cfg)
     await db.connect()
     docker = DockerClient()
     await docker.connect()
@@ -55,8 +55,9 @@ async def lifespan(app: FastAPI):
     app.state.docker = docker
     app.state.collector = collector
     app.state.tasks = TaskManager()
+    db_desc = f"sql-hub@{cfg.sql_hub_url}/{cfg.sql_hub_db_name}" if cfg.sql_hub_url else cfg.db_path
     log.info(
-        "pi-hub-agent %s up — db=%s exec=%s", __version__, cfg.db_path, cfg.enable_exec
+        "pi-hub-agent %s up — db=%s exec=%s", __version__, db_desc, cfg.enable_exec
     )
     try:
         yield

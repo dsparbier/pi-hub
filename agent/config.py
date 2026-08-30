@@ -60,6 +60,14 @@ class Config:
     )
 
     # --- storage --------------------------------------------------------
+    # SQL-Hub is the production backend (fleet-wide default: SQL database sources go
+    # through SQL-Hub over a local/embedded DB, see ~/projects/CLAUDE.md). db_path is
+    # now only the local-sqlite *fallback* path, used when SQL_HUB_URL isn't set
+    # (tests set AGENT_DB_PATH=":memory:" and leave SQL_HUB_URL unset — see
+    # tests/conftest.py and db.py's open_database()).
+    sql_hub_url: str = os.environ.get("SQL_HUB_URL", "")
+    sql_hub_api_key: str = os.environ.get("SQL_HUB_API_KEY", "")
+    sql_hub_db_name: str = os.environ.get("SQL_HUB_DB_NAME", "pi-hub-agent.db")
     db_path: str = os.environ.get("AGENT_DB_PATH", "/data/metrics.db")
 
     # --- misc ----------------------------------------------------------
