@@ -143,61 +143,12 @@ const services = [
     url: 'http://open-webui.pi-hub.local',
     links: [],
   },
-  {
-    id: 'jarvis',
-    label: 'Jarvis',
-    icon: '🎯',
-    description: 'AI assistant agent',
-    category: 'ai-agent',
-    group: 'ai',
-    status: 'online',
-    url: 'http://jarvis.ai.local',
-    links: [],
-  },
-  {
-    id: 'derek',
-    label: 'Derek',
-    icon: '💡',
-    description: 'AI assistant agent',
-    category: 'ai-agent',
-    group: 'ai',
-    status: 'online',
-    url: 'http://derek.ai.local',
-    links: [],
-  },
-  {
-    id: 'lois',
-    label: 'Lois',
-    icon: '🌸',
-    description: 'AI assistant agent',
-    category: 'ai-agent',
-    group: 'ai',
-    status: 'online',
-    url: 'http://lois.ai.local',
-    links: [],
-  },
-  {
-    id: 'pepper',
-    label: 'Pepper',
-    icon: '🌶',
-    description: 'AI assistant agent',
-    category: 'ai-agent',
-    group: 'ai',
-    status: 'online',
-    url: 'http://pepper.ai.local',
-    links: [],
-  },
-  {
-    id: 'alfred',
-    label: 'Alfred',
-    icon: '🎩',
-    description: 'AI assistant agent',
-    category: 'ai-agent',
-    group: 'ai',
-    status: 'online',
-    url: 'http://alfred.ai.local',
-    links: [],
-  },
+  // Note: this registry previously hardcoded 5 "AI assistant agent" entries
+  // (Jarvis/Derek/Lois/Pepper/Alfred at *.ai.local, status: 'online') left
+  // over from an abandoned Gen-1 Docker deployment that was never actually
+  // built — see the "Derek (Digital-Twin) Architecture" Notion doc §2/§8.
+  // None of those hosts exist; removed 2026-09-12. `fleet.js` never carried
+  // them in the first place.
 
   // ── Data & Tools ─────────────────────────────────────────────────
   {
