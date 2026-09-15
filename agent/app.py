@@ -12,7 +12,6 @@ Plan 2 routers: container control, images, task progress WS, and (only when
 from __future__ import annotations
 
 import logging
-import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -24,6 +23,7 @@ from .db import open_database
 from .docker_client import DockerClient
 from .routes_containers_ctl import router as containers_ctl_router
 from .routes_containers_ro import router as containers_router
+from .routes_dev_hub_stream import router as dev_hub_stream_router
 from .routes_exec import router as exec_router
 from .routes_health import router as health_router
 from .routes_host import router as host_router
@@ -63,8 +63,15 @@ async def lifespan(app: FastAPI):
     # FLEET-LOGGING-STANDARD.md §3/§5 — Central Logs streaming for this agent's
     # own WARNING+ lines, off by default. Deliberately narrow: see
     # dev_hub_stream.py's docstring for why this agent doesn't get the full
-    # file/rotation/retention/viewer stack the FastAPI apps do.
-    if os.environ.get("DEV_HUB_LOG_STREAMING_ENABLED", "").lower() == "true":
+    # file/rotation/retention/viewer stack the FastAPI apps do. Live,
+    # UI-configurable via dev_hub_settings.py / PUT /dev-hub-stream/settings —
+    # no env-var edit required. set_db() first: dev_hub_settings persists into
+    # this same metrics db (no writable local storage in this container — see
+    # its own docstring), and background tasks have no request context to pull
+    # app.state.db from the way HTTP routes do.
+    from . import dev_hub_settings
+    dev_hub_settings.set_db(db)
+    if (await dev_hub_settings.get_all())["enabled"]:
         from .dev_hub_stream import start as start_dev_hub_stream
         await start_dev_hub_stream()
     try:
@@ -93,5 +100,6 @@ app.include_router(containers_router)
 app.include_router(containers_ctl_router)
 app.include_router(images_router)
 app.include_router(tasks_router)
+app.include_router(dev_hub_stream_router)
 if cfg.enable_exec:
     app.include_router(exec_router)

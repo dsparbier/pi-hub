@@ -19,13 +19,14 @@ than httpx, to avoid adding a second HTTP client library for one small module.
 import asyncio
 import json
 import logging
-import os
 import queue
 from datetime import datetime, timezone
 
 import aiohttp
 import websockets
 from websockets.exceptions import ConnectionClosed, InvalidStatus
+
+from . import dev_hub_settings
 
 logger = logging.getLogger("agent.dev_hub_stream")
 
@@ -62,16 +63,16 @@ class DevHubStreamHandler(logging.Handler):
                 pass
 
 
-def _dev_hub_url() -> str:
-    return os.environ.get("DEV_HUB_URL", "http://host.docker.internal:38103").rstrip("/")
+async def _dev_hub_url() -> str:
+    return (await dev_hub_settings.get_all())["dev_hub_url"].rstrip("/")
 
 
-def _dev_hub_api_key() -> str:
-    return os.environ.get("DEV_HUB_API_KEY", "")
+async def _dev_hub_api_key() -> str:
+    return (await dev_hub_settings.get_all())["dev_hub_api_key"] or ""
 
 
-def _headers() -> dict:
-    return {"X-API-Key": _dev_hub_api_key(), "Content-Type": "application/json"}
+async def _headers() -> dict:
+    return {"X-API-Key": await _dev_hub_api_key(), "Content-Type": "application/json"}
 
 
 def _ws_url(http_url: str) -> str:
@@ -83,23 +84,24 @@ async def _get_or_create_token() -> str:
     if _token:
         return _token
 
-    base_url = _dev_hub_url()
+    base_url = await _dev_hub_url()
+    headers = await _headers()
     async with aiohttp.ClientSession() as session:
-        async with session.get(f"{base_url}/api/log-sources", headers=_headers(), timeout=10) as resp:
+        async with session.get(f"{base_url}/api/log-sources", headers=headers, timeout=10) as resp:
             resp.raise_for_status()
             sources = await resp.json()
         existing = next((s for s in sources if s.get("name") == _SOURCE_NAME), None)
 
         if existing:
             async with session.post(
-                f"{base_url}/api/log-sources/{existing['id']}/rotate-token", headers=_headers(), timeout=10
+                f"{base_url}/api/log-sources/{existing['id']}/rotate-token", headers=headers, timeout=10
             ) as resp:
                 resp.raise_for_status()
                 data = await resp.json()
         else:
             async with session.post(
                 f"{base_url}/api/log-sources",
-                headers=_headers(),
+                headers=headers,
                 json={"name": _SOURCE_NAME, "description": "pi-hub-agent centralized log stream"},
                 timeout=10,
             ) as resp:
@@ -120,11 +122,12 @@ async def _stream_loop() -> None:
     while True:
         try:
             token = await _get_or_create_token()
-            url = f"{_ws_url(_dev_hub_url())}/ws/logs?token={token}"
+            current_url = await _dev_hub_url()
+            url = f"{_ws_url(current_url)}/ws/logs?token={token}"
             async with websockets.connect(url, open_timeout=10, ping_interval=20) as ws:
                 _connected = True
                 _last_error = None
-                logger.info("[DEV-HUB-STREAM] connected to %s", _dev_hub_url())
+                logger.info("[DEV-HUB-STREAM] connected to %s", current_url)
                 try:
                     while True:
                         entry = await asyncio.to_thread(_queue.get)
@@ -168,8 +171,15 @@ def is_running() -> bool:
     return _task is not None and not _task.done()
 
 
-def status() -> dict:
-    return {"connected": _connected, "last_error": _last_error}
+async def status() -> dict:
+    live = await dev_hub_settings.get_all()
+    return {
+        "connected": _connected,
+        "last_error": _last_error,
+        "enabled": bool(live["enabled"]),
+        "level": live["level"] or "WARNING",
+        "dev_hub_url": live["dev_hub_url"],
+    }
 
 
 async def start() -> None:
@@ -179,11 +189,12 @@ async def start() -> None:
     root = logging.getLogger()
     if _handler is None:
         _handler = DevHubStreamHandler()
-    _handler.setLevel(logging.WARNING)  # this agent's log volume is low; stream WARNING+ only
+    level_name = str((await dev_hub_settings.get_all())["level"] or "WARNING").upper()
+    _handler.setLevel(getattr(logging, level_name, logging.WARNING))
     if _handler not in root.handlers:
         root.addHandler(_handler)
     _task = asyncio.create_task(_stream_loop())
-    logger.info("[DEV-HUB-STREAM] started")
+    logger.info("[DEV-HUB-STREAM] started (level=%s)", level_name)
 
 
 async def stop() -> None:
@@ -203,3 +214,14 @@ async def stop() -> None:
     _task = None
     _connected = False
     _last_error = None
+
+
+async def apply_live_settings() -> None:
+    """Re-sync running state with the current dev_hub_settings — call after any
+    PUT to /dev-hub-stream/settings. Always stops first so a running stream
+    picks up a changed URL/key/level immediately instead of waiting for its
+    next natural reconnect."""
+    enabled = bool((await dev_hub_settings.get_all())["enabled"])
+    await stop()
+    if enabled:
+        await start()
