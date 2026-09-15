@@ -99,6 +99,19 @@ async def collector_status(collector: Collector = Depends(get_collector)):
     return await collector.status()
 
 
+@router.get("/logs/streaming/status")
+async def logs_streaming_status():
+    """Live Central Logs streaming status — FLEET-LOGGING-STANDARD.md §3.3's
+    standardized status shape. Enable/disable is env-var-only
+    (DEV_HUB_LOG_STREAMING_ENABLED) — see dev_hub_stream.py's docstring."""
+    import os
+    from .dev_hub_stream import status as stream_status
+    return {
+        "enabled": os.environ.get("DEV_HUB_LOG_STREAMING_ENABLED", "").lower() == "true",
+        **stream_status(),
+    }
+
+
 def _loads(raw, default):
     if not raw:
         return default

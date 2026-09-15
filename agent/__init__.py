@@ -4,4 +4,4 @@ Plan 1 of 2 (docs/PLAN-monitoring-consolidation.md). Retires Beszel; owns the sh
 foundation that Plan 2 (retire Portainer, docs/PLAN-container-management.md) builds on.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"

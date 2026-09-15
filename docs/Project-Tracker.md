@@ -8,6 +8,32 @@ Pi-Hub is a self-hosted front-end portal for a Raspberry Pi device (React 18 + V
 
 ## Session Log
 
+### 2026-09-15 — [Rollout] Decision: pi-hub-agent gets Central Logs streaming only, not the full stack
+
+Closes the fleet-wide logging audit's pi-hub task (`~/projects/_fleet/FLEET-LOGGING-STANDARD.md`
+§5). **Decision, documented in `agent/dev_hub_stream.py`'s docstring**: pi-hub-agent does *not*
+get the full in-app logging treatment (file logging + rotation + retention + a `View Logs`/
+`Log Configuration`/`Log Streaming` viewer UI) the FastAPI hub apps get. Reasoning: it's a
+low-volume sidecar (`logging.basicConfig` console-only today, captured fine by `docker logs`),
+and this repo's own React frontend already ships a broader, more valuable capability for the
+*fleet's* logs — `LogViewer.jsx`/`LogStream.jsx` stream host + every container's logs, a
+superset of "one app's own file," not a mechanism this would compete with or need to duplicate.
+
+What *is* worth the small added cost, and was built: mirroring the agent's own WARNING+ lines
+into DEV-Hub's Central Logs (new `agent/dev_hub_stream.py`, ported from the fleet's asyncio
+reference implementation, using `aiohttp` rather than `httpx` to avoid a second HTTP client
+dependency — this repo already pins `aiohttp` for `sql_hub_client.py`), so an agent-side
+problem is visible fleet-wide instead of requiring `docker logs pi-hub-agent` specifically.
+New `GET /api/logs/streaming/status` (`routes_host.py`, same `require_read` auth as the rest of
+that router). Enable is env-var-only (`DEV_HUB_LOG_STREAMING_ENABLED`/`DEV_HUB_URL`/
+`DEV_HUB_API_KEY` — pi-hub-agent has no fleet_config integration to hang a live setting off).
+Added `websockets` to `requirements.txt`.
+
+**Not live-verified** — unlike every other rollout in this same audit, pi-hub wasn't part of
+this session's locally-running fleet, so this is syntax-checked only (`ast.parse` clean), not
+confirmed against a real DEV-Hub connection. Verify `GET /api/logs/streaming/status` reports
+`connected:true` the next time pi-hub-agent is actually run with streaming enabled.
+
 ### 2026-08-29 (4) — `pi-hub-agent` metrics storage migrated to SQL-Hub
 Closes the fleet-wide "default to SQL-Hub over a local/embedded DB" gap for this repo's one
 backend (`~/projects/CLAUDE.md` "Application Fleet Architecture"; flagged as outstanding in

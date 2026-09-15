@@ -12,6 +12,7 @@ Plan 2 routers: container control, images, task progress WS, and (only when
 from __future__ import annotations
 
 import logging
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -59,9 +60,18 @@ async def lifespan(app: FastAPI):
     log.info(
         "pi-hub-agent %s up — db=%s exec=%s", __version__, db_desc, cfg.enable_exec
     )
+    # FLEET-LOGGING-STANDARD.md §3/§5 — Central Logs streaming for this agent's
+    # own WARNING+ lines, off by default. Deliberately narrow: see
+    # dev_hub_stream.py's docstring for why this agent doesn't get the full
+    # file/rotation/retention/viewer stack the FastAPI apps do.
+    if os.environ.get("DEV_HUB_LOG_STREAMING_ENABLED", "").lower() == "true":
+        from .dev_hub_stream import start as start_dev_hub_stream
+        await start_dev_hub_stream()
     try:
         yield
     finally:
+        from .dev_hub_stream import stop as stop_dev_hub_stream
+        await stop_dev_hub_stream()
         await collector.stop()
         await docker.close()
         await db.close()
