@@ -64,7 +64,7 @@ set (i.e. always, in `docker-compose.yml`); tests never set it, so they're unaff
 
 `wal_checkpoint()`/`incremental_vacuum()` are no-ops against the SQL-Hub backend — that's
 SQL-Hub's own connection to manage, not this agent's. `size_bytes()` is best-effort
-(`PRAGMA page_count`/`page_size` via `/query/read`; SQL-Hub's `BUG-FIX-PLAN.md` tracks
+(`PRAGMA page_count`/`page_size` via `/query/read`; SQL-Hub's DEV-Hub sql-hub bugs track
 tightening read-only enforcement there, which could someday break this pass-through —
 falls back to `0`, not a crash, if it ever does).
 

@@ -350,7 +350,7 @@ commands or by a human using DEV-Hub's own UI directly.
 
 - [ ] Rebuild/restart the app after code changes — a `git pull` alone does **not** update an
       already-running container if its logging/watcher code is baked into the image at build
-      time (same caveat as DEV-Hub's own deploy — see `docs/Bugs-Tracker.md`'s archived snapshot
+      time (same caveat as DEV-Hub's own deploy — see the DEV-Hub bug history
       in this repo for the incident that surfaced this).
   - [ ] `GET /api/settings` (or equivalent) round-trips the new keys (4, or 5 with
         `auto_logging_project_id` for the dropdown option) with sane defaults.

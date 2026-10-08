@@ -294,7 +294,7 @@ class SqlHubDatabase:
         # Best-effort only: no dedicated size endpoint on the data-plane API key this
         # agent holds (only SQL-Hub's own admin key sees real file sizes via
         # /admin/stats). Falls back to 0 if PRAGMA ever stops passing through
-        # /query/read (SQL-Hub's BUG-FIX-PLAN.md tracks tightening read-only
+        # /query/read (SQL-Hub's DEV-Hub bug tracks tightening read-only
         # enforcement there).
         try:
             page_count = await self.scalar("PRAGMA page_count")

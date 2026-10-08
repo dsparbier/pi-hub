@@ -138,7 +138,7 @@ repo.
 
 - **Version-string sync**: `package.json`'s `"version"` and `src/version.js`'s exported
   `version` constant are two independent strings that must be bumped together by hand: a prior
-  session found and fixed a real drift between them (docs/Bugs-Tracker.md, "stuck at 1.5.5 while
+  session found and fixed a real drift between them (a past DEV-Hub bug, "stuck at 1.5.5 while
   the app reported 1.5.6"). At the time this file was written, `package.json` reports `1.5.10`
   while `src/version.js` reports `1.5.9` — worth checking (and syncing) before relying on either
   as ground truth for the current version.
@@ -149,18 +149,10 @@ repo.
   inventory) intended to let an agent or developer reconstruct the UI from scratch.
 - `Project-Tracker.md` — running session log of changes, current version, and history
   reconstructed from git log.
-- `Bugs-Tracker.md`, `Features-Tracker.md` — **archived** pre-migration snapshots only; bug/
-  feature/enhancement tracking moved to DEV-Hub on 2026-07-12 (DEV-Hub project id 24, bug ids
-  89–91, feature ids 116–124). Use the `/create-bug`, `/update-bug`, `/create-feature`, etc.
-  slash commands instead of editing these files — see `docs/dev-hub-sync.md`.
-- `dev-hub-sync.md` — the general playbook (applies fleet-wide, not just here) for migrating a
-  project's file-based tracking into DEV-Hub and the conventions for using it afterward.
+- Bugs, features and enhancements are tracked only in DEV-Hub (project `pi-hub`, id 24). There are no local tracker files.
 - `READ-ME.dev-hub-logging.md` — playbook for adding DEV-Hub auto-logging / a "Report to
   DEV-Hub" menu to an app; evaluated and skipped for this repo (see Ecosystem context above).
-- `BUG-FIX-PLAN.md` — a risk-ordered remediation checklist against DEV-Hub's then-open backlog
-  for this project (15 bugs, 6 enhancements, 4 features at time of writing); does not itself
-  modify code, and items should be checked against current DEV-Hub status before assuming any
-  are still open.
+
 
 ---
 

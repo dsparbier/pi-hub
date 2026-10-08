@@ -8,6 +8,10 @@ Pi-Hub is a self-hosted front-end portal for a Raspberry Pi device (React 18 + V
 
 ## Session Log
 
+### 2026-10-08 — Tracker cleanup
+
+Removed the local bug, feature and enhancement tracker files (BUG-FIX-PLAN.md, Bugs-Tracker.md, Features-Tracker.md, dev-hub-sync.md). Those items are tracked only in DEV-Hub. Item references in the docs and memory were removed, and the session history stays. Version 0.3.1 (patch: documentation and comment-only changes).
+
 ### 2026-09-15 — [Rollout] Decision: pi-hub-agent gets Central Logs streaming only, not the full stack
 
 Closes the fleet-wide logging audit's pi-hub task (`~/projects/_fleet/FLEET-LOGGING-STANDARD.md`
@@ -63,7 +67,7 @@ the 2026-08-29 (2)/(3) entries below, since Plan 1/2 had shipped with local SQLi
 - **Verified**: all 43 agent tests pass unchanged; live end-to-end against a running
   SQL-Hub instance — rebuilt, healthy, real `host_samples`/`container_samples` rows
   confirmed landing in SQL-Hub via direct query.
-- Tracked in DEV-Hub as feature id 205 (`pi-hub-agent metrics storage migrated to SQL-Hub`,
+- Tracked in DEV-Hub as a feature (`pi-hub-agent metrics storage migrated to SQL-Hub`,
   status `done`).
 
 ### 2026-08-29 (3) — Plan 2: native container management, retire Portainer (`docs/PLAN-container-management.md`)
@@ -172,10 +176,9 @@ the 2026-08-29 (2)/(3) entries below, since Plan 1/2 had shipped with local SQLi
   `pi-hub-network` external network reference from sql-hub's compose file (nothing in this repo
   ever created it) and a similar `dev-hub_default` reference from invest-hub's. No app code
   changed here; `package.json`/`src/version.js` bumped to 1.5.10 (patch) to keep the version-sync
-  convention this project already follows. Logged and resolved as DEV-Hub bug #187.
+  convention this project already follows. Logged and resolved.
 
 ### 2026-07-16
-- Added `docs/BUG-FIX-PLAN.md`: a risk-ordered remediation plan covering every currently-open
   DEV-Hub bug/enhancement/feature for this project (15 bugs, 6 enhancements, 4 features), each
   with root cause, concrete fix approach grounded in current code, files touched, and a
   verification step, grouped into three phases (critical, functional correctness, hardening &
@@ -186,9 +189,7 @@ the 2026-08-29 (2)/(3) entries below, since Plan 1/2 had shipped with local SQLi
 
 ### 2026-07-12
 - Migrated bug/feature/enhancement tracking to DEV-Hub per `docs/dev-hub-sync.md`. Created the
-  `pi-hub` project in DEV-Hub (id 24), migrated the 3 resolved bugs from `Bugs-Tracker.md` (ids
-  89–91, all `status: resolved`) and the 9 done features from `Features-Tracker.md` (ids 116–124,
-  all `status: done`, `phase-1`). No enhancements migrated — the "Next Planned Features" backlog
+ `pi-hub` project in DEV-Hub (id 24), migrated the 3 resolved bugs from `Bugs-Tracker.md` and the 9 done features from `Features-Tracker.md`. No enhancements migrated — the "Next Planned Features" backlog
   was empty. `docs/Bugs-Tracker.md` and `docs/Features-Tracker.md` now carry a migration notice at
   the top; their original content is kept below as an archived snapshot. Evaluated
   `docs/READ-ME.dev-hub-logging.md` (Auto-Logging + "Report to DEV-Hub" menu) but skipped it per
