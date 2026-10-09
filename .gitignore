@@ -18,3 +18,8 @@ agent/agent-data/
 # Claude Code: track .claude/ (CLAUDE.md, memory.md, commands, docs) but exclude local settings
 .claude/settings.json
 .claude/settings.local.json
+.venv/
+.coverage
+.pytest_cache/
+htmlcov/
+__pycache__/
