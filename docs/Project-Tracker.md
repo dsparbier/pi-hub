@@ -1,12 +1,18 @@
 # Pi-Hub Project Tracker
 
 ## Current Version
-1.8.0
+UI (`package.json`): 1.8.2 (`ui-v1.8.2`). Agent (`agent/__init__.py`): 0.3.3 (`api-v0.3.3`).
 
 ## Overview
 Pi-Hub is a self-hosted front-end portal for a Raspberry Pi device (React 18 + Vite 5, CSS Modules, no UI library), served via a Docker multi-stage build (Nginx). As of 1.6.0 the compose project also runs a small FastAPI sidecar, `pi-hub-agent` (`agent/`), for native host metrics + a read-only container view — see [AGENT.md](./AGENT.md). See [UI_MANIFEST.md](./UI_MANIFEST.md) for the full design spec.
 
 ## Session Log
+
+### 2026-10-27 — Release UI 1.8.2 / agent 0.3.3: DNS to Pi eth0, lock aligned
+- UI patch bump 1.8.1 → 1.8.2; `package-lock.json` root aligned (was 1.6.0).
+- Agent patch bump 0.3.2 → 0.3.3. Agent gate: 43 passed.
+- Compose DNS moved to Pi eth0 (.75) with 8.8.8.8 fallback for both services.
+- Pi redeployed; UI returns 200, agent healthy on 0.3.3.
 
 ### 2026-10-08 — Tracker cleanup
 
