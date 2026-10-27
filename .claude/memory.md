@@ -130,3 +130,7 @@ stable architecture/conventions primer see `.claude/CLAUDE.md` (imports this fil
   that pass — `restart()` kwarg (`timeout=` not `t=`), recreate payload `Hostname` vs
   `container:`/`host` network mode conflict (now stripped in `build_payload`), and
   `old_id` reporting the name not the id. See `docs/Project-Tracker.md` 2026-08-29 (3).
+
+## Test scope at commit (fleet rule)
+
+Commits run the PyTest gate in **selective** mode: only tests affected by the pending change. Full suite only on first run, testmon-untrusted changes (config, data, requirements, conftest, `_vendor/`), or `--full`. `--clean` is for releases only. Full rule: `~/projects/CLAUDE.md` ("Test scope per commit"). Do not add a commit step that runs the whole suite.

@@ -2,14 +2,14 @@
 
 Project-level context, scoped to this repo (`pi-hub`) only — not a global setting.
 
-`pi-hub` is a **pure static frontend**: a self-hosted dashboard/portal that presents links,
-status, and lightweight health checks for the other self-hosted services in this personal
-fleet, in a single configurable page. Confirmed from `docs/UI_MANIFEST.md` and
-`docs/Project-Tracker.md`: "Pi-Hub is a self-hosted front-end portal for a Raspberry Pi
-device." It is React 18 + Vite 5 with CSS Modules — no UI library, no state library — built as
-a static bundle and served by Nginx. There is **no backend process**; all user config (which
-services/groups exist, theme, accent color, sidebar state, refresh/timeout settings) lives in
-the browser's `localStorage` under `ph-*` keys.
+`pi-hub` is a self-hosted dashboard/portal that presents links, status, and health checks
+for the other services in this personal fleet. The frontend is React 18 + Vite 5 with CSS
+Modules, built as a static bundle and served by Nginx. Since 2026-08-29 it also has a backend
+container, **`pi-hub-agent`** (FastAPI, in `agent/`). That backend provides host metrics,
+container lifecycle control, image management and an exec terminal. It is reached through the
+console's `/agent/` Nginx path and publishes only on `127.0.0.1:31107`. Per-user config
+(services, groups, theme, sidebar state, refresh/timeout settings) still lives in the browser's
+`localStorage` under `ph-*` keys.
 
 For evolving decisions, gotchas, and pending cross-project amendments, see
 `.claude/memory.md`, imported automatically below.
@@ -27,8 +27,9 @@ Two distinct things share the name, and it's worth keeping straight:
   "**Pi-Hub** is a **distributed service platform** that provides a unified ecosystem for
   database management, automation, and operational tooling" spanning SQL-Hub, Tool-Hub,
   automation/scheduling, and an operations layer. That platform runs on a physical Raspberry
-  Pi host reachable at addresses like `192.168.68.115` (WiFi) / `192.168.68.57` (eth0), with
-  services individually addressable as `<name>.pi-hub.local`.
+  Pi host reachable at `192.168.68.75` (eth0, primary since 2026-10-14) and `192.168.68.115`
+  (WiFi), with services individually addressable as `<name>.pi-hub.local`. The old eth0
+  address `192.168.68.57` is no longer in use.
 
 This repo's own branding leans into the shared name — `index.html`'s `<title>` is "Pi-Hub",
 and `useConfig.js`'s default `hubName` is `'Pi-Hub'` — so when reading code/docs here, "Pi-Hub"
@@ -105,8 +106,9 @@ State keys persisted to `localStorage`: `ph-services`, `ph-groups`, `ph-config`,
 - **Dev server** (`vite.config.js`): port `3030`, `host: true` (listens on all interfaces).
 - **Docker Compose** (`docker-compose.yml`): single `pi-hub` service, host port
   `31106` → container port `80` (nginx), bound to `0.0.0.0`. DNS pinned to
-  `[192.168.68.115, 192.168.68.57, 1.1.1.1]` (Pi-Hub's AdGuard/NGINX resolver — WiFi primary,
-  eth0 wired fallback, then public fallback) and IPv6 disabled
+  `[192.168.68.115, 192.168.68.57, 1.1.1.1]` (Pi-Hub's AdGuard/NGINX resolver). **Stale as of
+  2026-10-14:** the Pi's eth0 is now `192.168.68.75`, so this list should be checked against
+  the live Pi before the next redeploy. IPv6 disabled
   (`sysctls: net.ipv6.conf.all.disable_ipv6=1`) — both added in a 2026-08-08 fleet-wide
   networking/DNS audit, no app code involved. A commented-out `pi-hub-dev` service in the same
   file documents (but does not itself provide — no `docker-compose.dev.yml` exists in this

@@ -6,9 +6,9 @@ services:
     ports:
       - "0.0.0.0:31106:80"
     dns:
-      - 192.168.68.115  # Pi-Hub WiFi (AdGuard/NGINX DNS) — primary
-      - 192.168.68.57   # Pi-Hub eth0 — same device, wired fallback
+      - 192.168.68.75   # Pi-Hub eth0 — same device, wired fallback
       - 1.1.1.1         # public fallback
+      - 8.8.8.8         # public fallback
     sysctls:
       - net.ipv6.conf.all.disable_ipv6=1  # IPv4-only — IPv6 causes local connectivity issues
     # For dev with hot-reload, override with the dev service below
@@ -70,9 +70,9 @@ services:
     security_opt:
       - no-new-privileges:true
     dns:
-      - 192.168.68.115
-      - 192.168.68.57
-      - 1.1.1.1
+      - 192.168.68.75   # Pi-Hub eth0 — same device, wired fallback
+      - 1.1.1.1         # public fallback
+      - 8.8.8.8         # public fallback
     sysctls:
       - net.ipv6.conf.all.disable_ipv6=1
     healthcheck:
